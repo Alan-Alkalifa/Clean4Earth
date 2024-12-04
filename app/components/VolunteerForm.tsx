@@ -2,8 +2,18 @@
 
 import { useState } from 'react';
 
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  interests: string[];
+  availability: string;
+  message: string;
+}
+
 export default function VolunteerForm() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     phone: '',
@@ -33,7 +43,7 @@ export default function VolunteerForm() {
     if (!interest) return;
     
     setFormData((prev) => {
-      const currentInterests = new Set(prev.interests);
+      const currentInterests = new Set<string>(prev.interests);
       
       if (currentInterests.has(interest)) {
         currentInterests.delete(interest);
