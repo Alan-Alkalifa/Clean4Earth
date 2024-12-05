@@ -54,7 +54,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center space-x-3">
                 <FaPhone className="text-primary" />
-                <span>(123) 456-7890</span>
+                <span>(+62) 86771882690</span>
               </li>
             </ul>
           </div>
@@ -65,14 +65,8 @@ export default function Footer() {
               Follow Us
             </h4>
             <div className="flex space-x-4">
-              <a href="https://facebook.com" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors duration-300">
-                <FaFacebookF className="text-xl" />
-              </a>
-              <a href="https://instagram.com" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors duration-300">
+              <a href="https://www.instagram.com/clean4earthh/" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors duration-300">
                 <FaInstagram className="text-xl" />
-              </a>
-              <a href="https://twitter.com" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors duration-300">
-                <FaTwitter className="text-xl" />
               </a>
             </div>
           </div>
