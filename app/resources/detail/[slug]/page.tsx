@@ -4,8 +4,7 @@ import { notFound } from 'next/navigation';
 import { Metadata, ResolvingMetadata } from 'next';
 
 type Props = {
-  params: { slug: string }
-  searchParams: { [key: string]: string | string[] | undefined }
+  params: { slug: string };
 }
 
 export async function generateMetadata(
@@ -32,7 +31,7 @@ export async function generateMetadata(
   };
 }
 
-export default function ResourceDetail({ params }: Props) {
+export default async function ResourceDetail({ params }: Props) {
   const resource = resources.find(r => r.slug === params.slug);
   
   if (!resource) {
