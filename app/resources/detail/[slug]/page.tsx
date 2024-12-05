@@ -1,15 +1,17 @@
 import { resources } from '@/data/resources';
 import ResourceDetailClient from '@/components/client/ResourceDetailClient';
 import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
+import { Metadata, ResolvingMetadata } from 'next';
 
-interface ResourceDetailProps {
-  params: {
-    slug: string;
-  };
+type Props = {
+  params: { slug: string }
+  searchParams: { [key: string]: string | string[] | undefined }
 }
 
-export async function generateMetadata({ params }: ResourceDetailProps): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
   const resource = resources.find(r => r.slug === params.slug);
 
   if (!resource) {
@@ -30,7 +32,7 @@ export async function generateMetadata({ params }: ResourceDetailProps): Promise
   };
 }
 
-export default function ResourceDetail({ params }: ResourceDetailProps) {
+export default function ResourceDetail({ params }: Props) {
   const resource = resources.find(r => r.slug === params.slug);
   
   if (!resource) {
