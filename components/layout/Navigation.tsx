@@ -1,9 +1,12 @@
 'use client';
 import Link from 'next/link';
+import Image from "next/image";
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   const menuItems = [
     { name: 'Home', href: '/' },
@@ -15,12 +18,17 @@ export default function Navigation() {
     { name: 'Contact', href: '/contact' },
   ];
 
+  const isActive = (path: string) => {
+    if (path === '/' && pathname !== '/') return false;
+    return pathname?.startsWith(path);
+  };
+
   return (
     <nav className="fixed w-full z-50 bg-white/90 backdrop-blur-sm shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="font-bold text-xl text-primary">
-            Clean4Earth
+          <Link href="/" className="font-bold text-xl text-primary flex items-center gap-2">
+            <Image src="/logo.svg" alt="Clean4Earth Logo" width={86} height={86} />
           </Link>
 
           {/* Desktop Menu */}
@@ -29,7 +37,12 @@ export default function Navigation() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-text-primary hover:text-primary transition-colors"
+                className={`text-text-primary hover:text-primary transition-colors relative py-2
+                  ${isActive(item.href) ? 'text-primary' : ''}
+                  after:content-[''] after:absolute after:left-0 after:bottom-0 
+                  after:w-full after:h-0.5 after:bg-primary after:transition-transform 
+                  after:duration-300 after:origin-left
+                  ${isActive(item.href) ? 'after:scale-x-100' : 'after:scale-x-0'}`}
               >
                 {item.name}
               </Link>
@@ -68,7 +81,10 @@ export default function Navigation() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block px-3 py-2 text-text-primary hover:text-primary transition-colors"
+                  className={`block px-3 py-2 transition-colors relative
+                    ${isActive(item.href) 
+                      ? 'text-primary bg-primary/5 border-l-4 border-primary pl-2' 
+                      : 'text-text-primary hover:text-primary'}`}
                   onClick={() => setIsOpen(false)}
                 >
                   {item.name}

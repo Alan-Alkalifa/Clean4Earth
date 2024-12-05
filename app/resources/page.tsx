@@ -1,55 +1,9 @@
-'use client';
-
 import Image from 'next/image';
-import ResourceCard from '../components/ResourceCard';
-import FadeIn from '../components/animations/FadeIn';
-import StaggerChildren from '../components/animations/StaggerChildren';
+import ResourcesClient from '../../components/client/ResourcesClient';
+import FadeIn from '../../components/animations/FadeIn';
+import StaggerChildren from '../../components/animations/StaggerChildren';
 
 export default function Resources() {
-  const resources = [
-    {
-      title: "Sustainable Living Guide",
-      description: "Comprehensive guide for adopting eco-friendly practices in daily life.",
-      type: "Guide",
-      image: "https://images.unsplash.com/photo-1472141521881-95d0e87e2e39?ixlib=rb-4.0.3",
-      downloadLink: "/resources/sustainable-living-guide.pdf",
-      readMoreLink: "/resources/sustainable-living"
-    },
-    {
-      title: "Recycling 101",
-      description: "Learn the basics of proper recycling and waste management.",
-      type: "Educational",
-      image: "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?ixlib=rb-4.0.3",
-      downloadLink: "/resources/recycling-guide.pdf",
-      readMoreLink: "/resources/recycling"
-    },
-    {
-      title: "Energy Conservation Tips",
-      description: "Simple ways to reduce energy consumption on campus.",
-      type: "Tips",
-      image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?ixlib=rb-4.0.3",
-      downloadLink: "/resources/energy-tips.pdf",
-      readMoreLink: "/resources/energy"
-    },
-    {
-      title: "Water Conservation Guide",
-      description: "Practical tips for reducing water usage.",
-      type: "Guide",
-      image: "https://images.unsplash.com/photo-1589927986089-35812388d1f4?ixlib=rb-4.0.3",
-      downloadLink: "/resources/water-guide.pdf",
-      readMoreLink: "/resources/water"
-    }
-  ];
-
-  const sustainabilityTips = [
-    "Use reusable water bottles and coffee cups",
-    "Turn off lights when leaving a room",
-    "Use public transportation or bike when possible",
-    "Reduce paper usage by going digital",
-    "Properly sort recyclables",
-    "Choose energy-efficient appliances"
-  ];
-
   return (
     <div className="pt-16">
       {/* Hero Section */}
@@ -73,52 +27,7 @@ export default function Resources() {
       </section>
 
       {/* Educational Materials Section */}
-      <section className="py-20 bg-background">
-        <div className="container max-w-7xl mx-auto px-4">
-          <FadeIn>
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Educational Materials</h2>
-              <p className="text-text-secondary text-lg">
-                Explore our collection of resources designed to help you live more sustainably
-                and make a positive impact on the environment.
-              </p>
-            </div>
-          </FadeIn>
-          <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {resources.map((resource, index) => (
-              <div key={index} className="transform hover:-translate-y-1 transition-transform duration-300">
-                <ResourceCard
-                  title={resource.title}
-                  description={resource.description}
-                  image={resource.image}
-                  type={resource.type}
-                  downloadLink={resource.downloadLink}
-                  readMoreLink={resource.readMoreLink}
-                />
-              </div>
-            ))}
-          </StaggerChildren>
-        </div>
-      </section>
-
-      {/* Sustainability Tips */}
-      <section className="py-20">
-        <div className="container">
-          <FadeIn>
-            <h2 className="text-center mb-12">Quick Sustainability Tips</h2>
-          </FadeIn>
-          <StaggerChildren className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {sustainabilityTips.map((tip, index) => (
-              <div
-                key={index}
-                className="bg-white p-6 rounded-lg shadow-md"
-              >
-                <p className="text-lg">{tip}</p>
-              </div>
-            ))}
-          </StaggerChildren>
-        </div>
-      </section>
+      <ResourcesClient />
 
       {/* Newsletter Section */}
       <section className="py-20">
