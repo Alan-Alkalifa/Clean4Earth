@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import RegistrationModal from '../modal/RegistrationModal';
+import Link from 'next/link';
 
 interface EventCardProps {
   title: string;
@@ -75,27 +75,14 @@ export default function EventCard({
             </div>
           </div>
           <p className="mb-6 text-gray-600 line-clamp-3">{description}</p>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          <Link
+            href={registrationLink}
+            className="block w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 text-center"
           >
             Register Now
-          </button>
+          </Link>
         </div>
       </div>
-
-      <RegistrationModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        eventDetails={{
-          title,
-          date,
-          time,
-          location,
-          description,
-          image
-        }}
-      />
     </>
   );
 }

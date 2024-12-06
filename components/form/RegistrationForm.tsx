@@ -1,255 +1,280 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'react-hot-toast';
-import { submitRegistrationForm } from '@/config/database';
+import { useState, FormEvent, ChangeEvent } from 'react';
 
-interface RegistrationFormData {
+interface FormData {
     fullName: string;
     email: string;
     phone: string;
-    organization?: string;
+    organization: string;
     numberOfGuests: number;
-    specialRequirements?: string;
+    specialRequirements: string;
     attendanceDate: string;
 }
 
-interface RegistrationFormProps {
-    onSuccess?: () => void;
+interface EventDetails {
+    title: string;
+    date: string;
+    time: string;
+    location: string;
+    description: string;
+    image: string;
 }
 
-export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState<{ success: boolean; error: string | null }>({
-        success: false,
-        error: null
-    });
-    const { register, handleSubmit, formState: { errors } } = useForm<RegistrationFormData>();
+interface Props {
+    onSuccess?: () => void;
+    eventDetails: EventDetails;
+}
 
-    const onSubmit = async (data: RegistrationFormData) => {
-        setIsSubmitting(true);
-        setSubmitStatus({ success: false, error: null });
+export default function RegistrationForm({ onSuccess, eventDetails }: Props) {
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState({ type: '', text: '' });
+    const [form, setForm] = useState<FormData>({
+        fullName: '',
+        email: '',
+        phone: '',
+        organization: '',
+        numberOfGuests: 1,
+        specialRequirements: '',
+        attendanceDate: ''
+    });
+    const [errors, setErrors] = useState<Partial<FormData>>({});
+
+    const validate = (data: FormData) => {
+        const errors: Partial<FormData> = {};
+        if (!data.fullName.trim()) errors.fullName = 'Name is required';
+        if (!data.email.trim()) {
+            errors.email = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+            errors.email = 'Invalid email format';
+        }
+        if (!data.phone.trim()) errors.phone = 'Phone is required';
+        if (!data.attendanceDate) errors.attendanceDate = 'Date is required';
+        return errors;
+    };
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setForm(prev => ({ ...prev, [name]: value }));
+        if (errors[name as keyof FormData]) {
+            setErrors(prev => ({ ...prev, [name]: '' }));
+        }
+        if (message.text) {
+            setMessage({ type: '', text: '' });
+        }
+    };
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        const newErrors = validate(form);
+        
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setIsLoading(true);
+        setMessage({ type: '', text: '' });
+
         try {
-            const result = await submitRegistrationForm(data);
-            
-            if (result.success) {
-                setSubmitStatus({ success: true, error: null });
-                toast.success('Registration successful!');
-                onSuccess?.();
-            } else {
-                throw new Error('Registration failed');
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...form,
+                    eventTitle: eventDetails.title,
+                    eventDate: eventDetails.date,
+                    eventTime: eventDetails.time
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Registration failed');
             }
+
+            setMessage({ type: 'success', text: data.message });
+            setForm({
+                fullName: '',
+                email: '',
+                phone: '',
+                organization: '',
+                numberOfGuests: 1,
+                specialRequirements: '',
+                attendanceDate: ''
+            });
+            // Remove onSuccess call to stay on the page
         } catch (error) {
             console.error('Registration error:', error);
-            setSubmitStatus({ 
-                success: false, 
-                error: 'Registration failed. Please try again or contact support if the problem persists.' 
+            setMessage({ 
+                type: 'error', 
+                text: error instanceof Error ? error.message : 'Registration failed. Please try again.' 
             });
-            toast.error('Registration failed. Please try again.');
         } finally {
-            setIsSubmitting(false);
+            setIsLoading(false);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            {/* Form Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Personal Information Group */}
-                <div className="space-y-6 md:col-span-2">
-                    <div className="border-b border-gray-200 pb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
+        <div className="max-w-2xl mx-auto">
+            <div className="mb-8">
+                <h2 className="text-2xl font-bold mb-4">{eventDetails.title}</h2>
+                <div className="bg-gray-50 rounded-lg p-6 space-y-4">
+                    <div className="flex items-center gap-2 text-gray-600">
+                        <span className="font-medium">Date:</span>
+                        <span>{eventDetails.date}</span>
                     </div>
-                    
-                    {/* Full Name */}
+                    <div className="flex items-center gap-2 text-gray-600">
+                        <span className="font-medium">Time:</span>
+                        <span>{eventDetails.time}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                        <span className="font-medium">Location:</span>
+                        <span>{eventDetails.location}</span>
+                    </div>
+                    <p className="text-gray-600">{eventDetails.description}</p>
+                </div>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-6 py-8">
+
+                <div className="space-y-4">
                     <div>
                         <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-                            Full Name <span className="text-red-500">*</span>
+                            Full Name *
                         </label>
                         <input
                             type="text"
                             id="fullName"
-                            {...register('fullName', { required: 'Full name is required' })}
-                            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors"
-                            placeholder="John Doe"
+                            name="fullName"
+                            value={form.fullName}
+                            onChange={handleChange}
+                            className={`mt-1 block w-full rounded-lg border ${
+                                errors.fullName ? 'border-red-500' : 'border-gray-300'
+                            } px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent`}
                         />
-                        {errors.fullName && (
-                            <p className="mt-1 text-sm text-red-600">{errors.fullName.message}</p>
-                        )}
+                        {errors.fullName && <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>}
                     </div>
 
-                    {/* Email and Phone in grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Email */}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                Email Address <span className="text-red-500">*</span>
+                                Email *
                             </label>
                             <input
                                 type="email"
                                 id="email"
-                                {...register('email', {
-                                    required: 'Email is required',
-                                    pattern: {
-                                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                        message: 'Invalid email address'
-                                    }
-                                })}
-                                className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors"
-                                placeholder="john@example.com"
+                                name="email"
+                                value={form.email}
+                                onChange={handleChange}
+                                className={`mt-1 block w-full rounded-lg border ${
+                                    errors.email ? 'border-red-500' : 'border-gray-300'
+                                } px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent`}
                             />
-                            {errors.email && (
-                                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-                            )}
+                            {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
                         </div>
 
-                        {/* Phone */}
                         <div>
                             <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                                Phone Number <span className="text-red-500">*</span>
+                                Phone *
                             </label>
                             <input
                                 type="tel"
                                 id="phone"
-                                {...register('phone', {
-                                    required: 'Phone number is required',
-                                    pattern: {
-                                        value: /^[0-9+\-\s()]*$/,
-                                        message: 'Invalid phone number'
-                                    }
-                                })}
-                                className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors"
-                                placeholder="+1 (555) 000-0000"
+                                name="phone"
+                                value={form.phone}
+                                onChange={handleChange}
+                                className={`mt-1 block w-full rounded-lg border ${
+                                    errors.phone ? 'border-red-500' : 'border-gray-300'
+                                } px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent`}
                             />
-                            {errors.phone && (
-                                <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
-                            )}
+                            {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
                         </div>
                     </div>
 
-                    {/* Organization */}
                     <div>
                         <label htmlFor="organization" className="block text-sm font-medium text-gray-700">
-                            Organization <span className="text-gray-400">(Optional)</span>
+                            Organization (Optional)
                         </label>
                         <input
                             type="text"
                             id="organization"
-                            {...register('organization')}
-                            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors"
-                            placeholder="Company or Organization"
+                            name="organization"
+                            value={form.organization}
+                            onChange={handleChange}
+                            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
                         />
                     </div>
-                </div>
 
-                {/* Event Details Group */}
-                <div className="space-y-6 md:col-span-2">
-                    <div className="border-b border-gray-200 pb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">Event Details</h3>
-                    </div>
-
-                    {/* Attendance Date and Guests in grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Attendance Date */}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
                             <label htmlFor="attendanceDate" className="block text-sm font-medium text-gray-700">
-                                Attendance Date <span className="text-red-500">*</span>
+                                Attendance Date *
                             </label>
                             <input
                                 type="date"
                                 id="attendanceDate"
-                                {...register('attendanceDate', { required: 'Please select attendance date' })}
-                                className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors"
+                                name="attendanceDate"
+                                value={form.attendanceDate}
+                                onChange={handleChange}
                                 min={new Date().toISOString().split('T')[0]}
+                                className={`mt-1 block w-full rounded-lg border ${
+                                    errors.attendanceDate ? 'border-red-500' : 'border-gray-300'
+                                } px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent`}
                             />
-                            {errors.attendanceDate && (
-                                <p className="mt-1 text-sm text-red-600">{errors.attendanceDate.message}</p>
-                            )}
+                            {errors.attendanceDate && <p className="mt-1 text-sm text-red-500">{errors.attendanceDate}</p>}
                         </div>
 
-                        {/* Number of Guests */}
                         <div>
                             <label htmlFor="numberOfGuests" className="block text-sm font-medium text-gray-700">
-                                Number of Guests <span className="text-red-500">*</span>
+                                Number of Guests *
                             </label>
                             <select
                                 id="numberOfGuests"
-                                {...register('numberOfGuests', { required: 'Please select number of guests' })}
-                                className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors"
+                                name="numberOfGuests"
+                                value={form.numberOfGuests}
+                                onChange={handleChange}
+                                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
                             >
-                                <option value="">Select number of guests</option>
-                                {[1, 2, 3, 4, 5].map((num) => (
+                                {[1, 2, 3, 4, 5].map(num => (
                                     <option key={num} value={num}>
                                         {num} {num === 1 ? 'Guest' : 'Guests'}
                                     </option>
                                 ))}
                             </select>
-                            {errors.numberOfGuests && (
-                                <p className="mt-1 text-sm text-red-600">{errors.numberOfGuests.message}</p>
-                            )}
                         </div>
                     </div>
 
-                    {/* Special Requirements */}
                     <div>
                         <label htmlFor="specialRequirements" className="block text-sm font-medium text-gray-700">
-                            Messages <span className="text-gray-400">(Optional)</span>
+                            Special Requirements (Optional)
                         </label>
                         <textarea
                             id="specialRequirements"
-                            {...register('specialRequirements')}
+                            name="specialRequirements"
+                            value={form.specialRequirements}
+                            onChange={handleChange}
                             rows={3}
-                            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors"
-                            placeholder="Any dietary restrictions or accessibility requirements?"
+                            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
                         />
                     </div>
                 </div>
-            </div>
 
-            {/* Status Messages */}
-            {(submitStatus.success || submitStatus.error) && (
-                <div className="my-6">
-                    {submitStatus.success && (
-                        <div className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg flex items-center shadow-sm">
-                            <svg className="w-5 h-5 mr-3 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span className="text-sm">Thank you for your interest! Your registration has been submitted successfully.</span>
-                        </div>
-                    )}
-                    
-                    {submitStatus.error && (
-                        <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center shadow-sm">
-                            <svg className="w-5 h-5 mr-3 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span className="text-sm">{submitStatus.error}</span>
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* Submit Button */}
-            <div className="pt-6">
                 <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    disabled={isLoading}
+                    className="w-full rounded-lg bg-primary px-4 py-3 text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 transition-colors"
                 >
-                    {isSubmitting ? (
-                        <>
-                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Registering...
-                        </>
-                    ) : (
-                        'Complete Registration'
-                    )}
+                    {isLoading ? 'Submitting...' : 'Register'}
                 </button>
-            </div>
-        </form>
+            </form>
+            {message.text && (
+                    <div className={`p-4 rounded ${
+                        message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+                    }`}>
+                        {message.text}
+                    </div>
+                )}
+        </div>
     );
 }
