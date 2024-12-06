@@ -65,37 +65,13 @@ export default function Resources() {
           <FadeIn>
             <h2 className="text-center mb-12">Our Partners</h2>
           </FadeIn>
-          <StaggerChildren className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 items-center max-w-4xl mx-auto">
-            <div className="p-6 bg-white rounded-lg shadow-md aspect-video relative overflow-hidden">
+          <StaggerChildren className="flex justify-center items-center">
+            <div className="p-6 bg-white rounded-lg shadow-md aspect-video relative overflow-hidden w-full max-w-sm">
               <Image
-                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3"
-                alt="Environmental Organization"
+                src="/logoupjPNG.png"
+                alt="Logo UPJ"
                 fill
-                className="object-contain"
-              />
-            </div>
-            <div className="p-6 bg-white rounded-lg shadow-md aspect-video relative overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3"
-                alt="Research Institute"
-                fill
-                className="object-contain"
-              />
-            </div>
-            <div className="p-6 bg-white rounded-lg shadow-md aspect-video relative overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3"
-                alt="Educational Partner"
-                fill
-                className="object-contain"
-              />
-            </div>
-            <div className="p-6 bg-white rounded-lg shadow-md aspect-video relative overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3"
-                alt="Technology Partner"
-                fill
-                className="object-contain"
+                className="object-contain p-4"
               />
             </div>
           </StaggerChildren>

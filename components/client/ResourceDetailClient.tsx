@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { FaArrowLeft, FaShare, FaClock, FaUser, FaCalendar, FaTag, FaExternalLinkAlt, FaEye, FaHeart } from 'react-icons/fa';
 import FadeIn from '../animations/FadeIn';
 import StaggerChildren from '../animations/StaggerChildren';
-import { Resource } from '../../data/resources';
-import { resources } from '../../data/resources';
+import { Resource, resources } from '@/data/resources';
 
 interface ResourceDetailClientProps {
   resource: Resource;
@@ -32,7 +31,7 @@ export default function ResourceDetailClient({ resource }: ResourceDetailClientP
   return (
     <div className="min-h-screen space-y-8">
       {/* Hero Section */}
-      <section className="relative h-[60vh] flex items-center">
+      <section className="relative min-h-[75vh] md:h-[60vh] flex items-center py-12 sm:py-16 md:py-24">
         <div className="absolute inset-0 z-0">
           <Image
             src={resource.image}
@@ -42,32 +41,32 @@ export default function ResourceDetailClient({ resource }: ResourceDetailClientP
             priority
           />
         </div>
-        <div className="container relative z-10 text-white">
+        <div className="container relative z-10 text-white px-4 md:px-6">
           <FadeIn>
             <Link 
               href="/resources" 
-              className="inline-flex items-center text-white/90 hover:text-white mb-8 transition-colors group"
+              className="inline-flex items-center text-white/90 hover:text-white mb-6 transition-colors group"
             >
               <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
               Back to Resources
             </Link>
-            <div className="flex flex-wrap items-center gap-4 mb-4">
-              <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-sm">
+            <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-4">
+              <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-xs md:text-sm">
                 <FaTag className="mr-2" />
                 {resource.category}
               </span>
-              <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-sm">
+              <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-xs md:text-sm">
                 Difficulty: {resource.difficulty}
               </span>
               {resource.estimatedImpact && (
-                <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-sm">
+                <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-xs md:text-sm">
                   Impact: {resource.estimatedImpact}
                 </span>
               )}
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-primary">{resource.title}</h1>
-            <p className="text-xl md:text-2xl max-w-2xl text-white/90 mb-8">{resource.description}</p>
-            <div className="flex flex-wrap items-center gap-6 text-sm text-white/80">
+            <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 text-primary">{resource.title}</h1>
+            <p className="text-lg md:text-2xl max-w-2xl text-white/90 mb-6 md:mb-8">{resource.description}</p>
+            <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 text-sm text-white/80">
               <div className="flex items-center gap-4">
                 {resource.authorImage && (
                   <Image
@@ -81,27 +80,29 @@ export default function ResourceDetailClient({ resource }: ResourceDetailClientP
                 <div>
                   <div className="font-semibold">{resource.author}</div>
                   {resource.authorRole && (
-                    <div className="text-white/60 text-sm">{resource.authorRole}</div>
+                    <div className="text-white/60 text-xs md:text-sm">{resource.authorRole}</div>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <FaCalendar className="text-primary" />
-                <span>{resource.date}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaClock className="text-primary" />
-                <span>{resource.readTime}</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1">
-                  <FaEye className="text-primary" />
-                  {resource.views?.toLocaleString()} views
-                </span>
-                <span className="flex items-center gap-1">
-                  <FaHeart className="text-primary" />
-                  {resource.likes?.toLocaleString()} likes
-                </span>
+              <div className="flex flex-wrap gap-4 md:gap-6">
+                <div className="flex items-center gap-2">
+                  <FaCalendar className="text-primary" />
+                  <span>{resource.date}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaClock className="text-primary" />
+                  <span>{resource.readTime}</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="flex items-center gap-1">
+                    <FaEye className="text-primary" />
+                    {resource.views?.toLocaleString()} views
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <FaHeart className="text-primary" />
+                    {resource.likes?.toLocaleString()} likes
+                  </span>
+                </div>
               </div>
             </div>
           </FadeIn>

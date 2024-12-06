@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import EventCard from '../card/EventCard';
 import FadeIn from '../animations/FadeIn';
 import StaggerChildren from '../animations/StaggerChildren';
@@ -9,46 +8,57 @@ export default function EventsClient() {
   const upcomingEvents = [
     {
       id: 1,
-      title: "Campus Clean-up Day",
-      date: "2024-02-15",
-      time: "09:00 AM",
-      location: "Main Campus Square",
-      description: "Join us for our monthly campus clean-up initiative.",
-      image: "https://images.unsplash.com/photo-1554265352-d7fd5129be15?ixlib=rb-4.0.3",
-      registrationLink: "/events/campus-cleanup"
+      title: "Sustainability Workshop",
+      date: "2024-12-15",
+      time: "01:00 PM",
+      location: "Gedung A Univeritas Pembangunan Jaya",
+      description: "Learn practical tips for sustainable living.",
+      image: "https://images.unsplash.com/photo-1544928147-79a2dbc1f389?ixlib=rb-4.0.3",
+      registrationLink: "/events/sustainable-workshop"
     },
     {
       id: 2,
-      title: "Sustainability Workshop",
-      date: "2024-02-20",
-      time: "02:00 PM",
-      location: "Environmental Science Building",
-      description: "Learn practical tips for sustainable living.",
-      image: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?ixlib=rb-4.0.3",
+      title: "Online Campaign",
+      date: "2024-12-01 - 2024-12-23",
+      time: "Online",
+      location: "Instagram",
+      description: "Follow us on Instagram to learn about our Campaign.",
+      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3",
       registrationLink: "/events/sustainable-workshop"
-    }
+    },
+    {
+    id: 3,
+    title: "Open Booth Campaign",
+    date: "2024-12-23",
+    time: "07:00 AM - 03.00 PM",
+    location: "Aula lt3 Gedung B UPJ",
+    description: "Come and learn about our sustainability initiatives.",
+    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3",
+    registrationLink: "/events/sustainable-workshop"
+   }
+
   ];
 
   const pastEvents = [
     {
       id: 3,
-      title: "Tree Planting Initiative",
-      date: "2024-01-10",
-      time: "10:00 AM",
-      location: "Campus Garden",
-      description: "Join us for a day of tree planting to enhance our campus green spaces.",
-      image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3",
-      registrationLink: "/events/tree-planting"
+      title: "Sustainability Workshop",
+      date: "2024-11-15",
+      time: "01:00 PM",
+      location: "Gedung A Universitas Pembangunan Jaya",
+      description: "Introduction to sustainable practices and eco-friendly living.",
+      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3",
+      registrationLink: "/events/past-workshop"
     },
     {
       id: 4,
-      title: "Recycling Awareness Day",
-      date: "2024-01-05",
-      time: "11:00 AM",
-      location: "Student Center",
-      description: "Learn about proper recycling practices and waste management.",
-      image: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3",
-      registrationLink: "/events/recycling-awareness"
+      title: "Clean4Earth Introducer",
+      date: "2024-11-23",
+      time: "09:00 AM",
+      location: "Online",
+      description: "Online Information to introduce Clean4Earth.",
+      image: "https://images.unsplash.com/photo-1560523159-6b681a1e1852?ixlib=rb-4.0.3",
+      registrationLink: "/events/past-exhibition"
     }
   ];
 
