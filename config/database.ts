@@ -75,3 +75,5 @@ export const submitRegistrationForm = async (formData: {
         return { success: false, error };
     }
 };
+
+export { db };

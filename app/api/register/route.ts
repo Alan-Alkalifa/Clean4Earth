@@ -1,22 +1,21 @@
 import { NextResponse } from 'next/server';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '@/config/database';
 
 export async function POST(request: Request) {
     try {
         const data = await request.json();
         
-        // Here you would typically:
-        // 1. Validate the data
-        // 2. Store it in your database
-        // 3. Send confirmation email
-        // For now, we'll just simulate a successful registration
-        
-        // Simulate some processing time
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Add registration to Firestore
+        const docRef = await addDoc(collection(db, 'registrations'), {
+            ...data,
+            createdAt: new Date().toISOString()
+        });
 
-        // Return success response
         return NextResponse.json({ 
             success: true, 
-            message: 'Registration successful!' 
+            message: 'Registration successful! We will contact you shortly.',
+            registrationId: docRef.id
         });
     } catch (error) {
         console.error('Registration error:', error);
