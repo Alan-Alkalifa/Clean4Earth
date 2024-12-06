@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, FormEvent, ChangeEvent } from 'react';
+import { submitRegistrationForm } from '@/config/database';
 
 interface FormData {
     fullName: string;
@@ -77,24 +78,18 @@ export default function RegistrationForm({ onSuccess, eventDetails }: Props) {
         setMessage({ type: '', text: '' });
 
         try {
-            const response = await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...form,
-                    eventTitle: eventDetails.title,
-                    eventDate: eventDetails.date,
-                    eventTime: eventDetails.time
-                })
+            const result = await submitRegistrationForm({
+                ...form,
+                eventTitle: eventDetails.title,
+                eventDate: eventDetails.date,
+                eventTime: eventDetails.time
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Registration failed');
+            if (!result.success) {
+                throw new Error('Registration failed');
             }
 
-            setMessage({ type: 'success', text: data.message });
+            setMessage({ type: 'success', text: 'Registration successful! We will contact you shortly.' });
             setForm({
                 fullName: '',
                 email: '',
@@ -104,7 +99,6 @@ export default function RegistrationForm({ onSuccess, eventDetails }: Props) {
                 specialRequirements: '',
                 attendanceDate: ''
             });
-            // Remove onSuccess call to stay on the page
         } catch (error) {
             console.error('Registration error:', error);
             setMessage({ 

@@ -62,6 +62,9 @@ export const submitRegistrationForm = async (formData: {
     attendanceDate: string;
     numberOfGuests: number;
     specialRequirements?: string;
+    eventTitle: string;
+    eventDate: string;
+    eventTime: string;
 }) => {
     try {
         const docRef = await addDoc(collection(db, 'registrations'), {
