@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navigation from "../components/layout/Navigation";
 import Footer from "../components/layout/Footer";
+import { Analytics } from "@vercel/analytics/react"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -22,6 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Analytics />
       <body className={`${poppins.variable} font-poppins flex flex-col min-h-screen`}>
         <Navigation />
         <main className="flex-grow">
