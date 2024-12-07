@@ -4,7 +4,7 @@ import Image from 'next/image';
 import ProgressBar from '../animations/ProgressBar';
 import FadeIn from '../animations/FadeIn';
 import StaggerChildren from '../animations/StaggerChildren';
-import { FaRecycle, FaSeedling, FaTrash, FaArrowRight, FaQuoteLeft } from 'react-icons/fa';
+import { FaRecycle, FaSeedling, FaTrash, FaArrowRight, FaQuoteLeft, FaLaptop, FaUtensils } from 'react-icons/fa';
 import Link from "next/link";
 
 export default function CampaignClient() {
@@ -18,17 +18,25 @@ export default function CampaignClient() {
       goals: ["Install 50 recycling stations", "Reduce waste by 30%", "Train 100 student volunteers"]
     },
     {
-      title: "Green Energy Initiative",
-      description: "Installation of solar panels and energy-efficient lighting systems in university buildings. Help us create a sustainable energy future!",
+      title: "Smart Canteen Initiative",
+      description: "Introducing a self-service system in our campus canteen where students clean up after meals. This initiative promotes responsibility, cleanliness, and reduces the need for additional cleaning staff.",
+      progress: 30,
+      image: "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-4.0.3",
+      icon: <FaUtensils className="w-8 h-8 text-primary" />,
+      goals: ["Install Self-Service Stations", "Implement Waste Sorting System", "Reduce Food Waste by 40%"]
+    },
+    {
+      title: "Digital Transformation Initiative",
+      description: "Transform UPJ into a paperless campus through digital solutions. We're implementing e-documents, digital submissions, and smart learning platforms to reduce paper waste and increase efficiency.",
       progress: 45,
-      image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3",
-      icon: <FaSeedling className="w-8 h-8 text-primary" />,
-      goals: ["Install solar panels", "Reduce energy usage by 25%", "LED lighting upgrade"]
+      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3",
+      icon: <FaLaptop className="w-8 h-8 text-primary" />,
+      goals: ["100% Digital Assignment Submissions", "E-library Implementation", "Paperless Administrative Processes"]
     },
     {
       title: "Zero Waste Challenge",
       description: "Join our campus-wide initiative to reduce waste and promote sustainable practices.",
-      progress: 60,
+      progress: 10,
       image: "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?ixlib=rb-4.0.3",
       icon: <FaTrash className="w-8 h-8 text-primary" />,
       goals: ["500 participants", "Reduce single-use plastics", "Weekly waste audits"]
@@ -103,10 +111,13 @@ export default function CampaignClient() {
                     <p className="text-gray-600 text-lg leading-relaxed">{campaign.description}</p>
                     <div className="space-y-4">
                       <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-gray-600">Target Progress</span>
+                        </div>
                       </div>
                       <ProgressBar
                         percentage={campaign.progress}
-                        label="Campaign Progress"
+                        label={`${campaign.progress}% Complete`}
                       />
                     </div>
                     <ul className="space-y-3">

@@ -18,7 +18,7 @@ export default function ContactClient() {
     {
       icon: "",
       title: "Call Us",
-      content: "+62 21 7455555"
+      content: "+62 85771882690"
     }
   ];
 
