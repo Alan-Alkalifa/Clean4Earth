@@ -16,18 +16,18 @@ export default function HomeClient() {
   const initiatives = [
     {
       title: 'Campus Recycling',
-      description: 'Implementing comprehensive recycling programs across campus facilities.',
+      description: 'Implementing comprehensive recycling programs to campus facilities by setting up recycling stations across campus with clear sorting guidelines. Join us in making our campus waste-free!',
       image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3'
     },
     {
-      title: 'Energy Conservation',
-      description: 'Reducing energy consumption through smart technologies and awareness.',
-      image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?ixlib=rb-4.0.3'
+      title: 'Digital Transformation Initiative',
+      description: 'Transform UPJ into a paperless campus through digital solutions. We\'re implementing e-documents, digital submissions, and smart learning platforms to reduce paper waste and increase efficiency.',
+      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3'
     },
     {
-      title: 'Green Transportation',
-      description: 'Promoting sustainable transportation options for students and staff.',
-      image: 'https://images.unsplash.com/photo-1519003300449-424ad0405076?ixlib=rb-4.0.3'
+      title: 'Smart Canteen Initiative',
+      description: 'Introducing a self-service system in our campus canteen where students clean up after meals. This initiative promotes responsibility, cleanliness, and reduces the need for additional cleaning staff.',
+      image: 'https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-4.0.3'
     }
   ];
 
