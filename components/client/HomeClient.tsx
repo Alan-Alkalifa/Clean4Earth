@@ -80,25 +80,26 @@ export default function HomeClient() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-20 bg-background">
-        <div className="container">
+      <section className="py-12 sm:py-16 lg:py-20 bg-background">
+        <div className="container px-4 sm:px-6">
           <FadeIn>
             <div className="max-w-2xl mx-auto text-center">
-              <h2 className="text-3xl font-bold mb-6">Stay Updated</h2>
-              <p className="text-text-secondary mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Stay Updated</h2>
+              <p className="text-base sm:text-lg text-text-secondary mb-6 sm:mb-8 max-w-xl mx-auto">
                 Subscribe to our newsletter for the latest updates on our sustainability
                 initiatives and upcoming events.
               </p>
-              <form className="flex gap-4 max-w-md mx-auto">
+              <form className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md mx-auto">
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-base"
                   required
+                  aria-label="Email address"
                 />
                 <button
                   type="submit"
-                  className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-colors duration-300"
+                  className="w-full sm:w-auto bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-colors duration-300 font-medium min-w-[120px]"
                 >
                   Subscribe
                 </button>

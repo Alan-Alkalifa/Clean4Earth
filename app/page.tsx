@@ -45,25 +45,25 @@ export default function Home() {
       <HomeClient />
 
       {/* CTA Section */}
-      <section className="py-20 bg-primary text-white">
-        <div className="container">
+      <section className="py-12 md:py-20 bg-primary text-white">
+        <div className="container px-4 md:px-6">
           <FadeIn>
             <div className="text-center max-w-3xl mx-auto">
-              <h2 className="text-3xl font-bold mb-6">Ready to Make a Difference?</h2>
-              <p className="text-lg mb-8 text-white/90">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Ready to Make a Difference?</h2>
+              <p className="text-base md:text-lg mb-6 md:mb-8 text-white/90">
                 Join our community of environmental champions and help create a more
                 sustainable future for UPJ.
               </p>
-              <div className="space-x-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:space-x-4">
                 <Link
                   href="/get-involved"
-                  className="bg-white text-primary hover:bg-gray-100 px-8 py-3 rounded-lg inline-block transition-colors duration-300"
+                  className="w-full sm:w-auto bg-white text-primary hover:bg-gray-100 px-8 py-3 rounded-lg inline-block transition-colors duration-300"
                 >
                   Join Now
                 </Link>
                 <Link
                   href="/about"
-                  className="border-2 border-white hover:bg-white hover:text-primary px-8 py-3 rounded-lg inline-block transition-colors duration-300"
+                  className="w-full sm:w-auto border-2 border-white hover:bg-white hover:text-primary px-8 py-3 rounded-lg inline-block transition-colors duration-300"
                 >
                   Learn More
                 </Link>
