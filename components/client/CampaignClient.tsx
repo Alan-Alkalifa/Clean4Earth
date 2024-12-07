@@ -48,25 +48,25 @@ export default function CampaignClient() {
       name: "Alan Alkalifa",
       role: "College Student",
       quote: "Being part of Clean4Earth has shown me how small actions can create big impacts. The community support and engagement make it truly special.",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3"
+      image: "/AlanAlkalifa.jpeg"
     },
     {
       name: "Cut Zhiffa Asharlyn",
       role: "College Student",
       quote: "The campus recycling program has transformed how our department handles waste. It's inspiring to see students taking the lead in sustainability.",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3"
+      image: "/CutZhiffaAsharlyn.jpeg"
     },
     {
       name: "Alisha Sumahesa",
       role: "College Student",
       quote: "Clean4Earth has opened my eyes to the importance of environmental conservation. It's amazing to see how our collective efforts make a difference.",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3"
+      image: "/AlishaSumahesa.jpeg"
     },
     {
       name: "Naufal Al Ghifary",
       role: "College Student",
       quote: "Joining Clean4Earth was one of the best decisions I made in college. Together, we're creating a more sustainable future for our campus and beyond.",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3"
+      image: "/NaufalAlGhifary.png"
     }
   ];
 
