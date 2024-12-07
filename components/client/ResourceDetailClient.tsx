@@ -31,7 +31,7 @@ export default function ResourceDetailClient({ resource }: ResourceDetailClientP
   return (
     <div className="min-h-screen space-y-8">
       {/* Hero Section */}
-      <section className="relative min-h-[75vh] md:h-[60vh] flex items-center py-12 sm:py-16 md:py-24">
+      <section className="relative min-h-[60vh] sm:min-h-[70vh] lg:min-h-[80vh] flex items-center py-8 sm:py-12 lg:py-16">
         <div className="absolute inset-0 z-0">
           <Image
             src={resource.image}
@@ -41,66 +41,66 @@ export default function ResourceDetailClient({ resource }: ResourceDetailClientP
             priority
           />
         </div>
-        <div className="container relative z-10 text-white px-4 md:px-6">
+        <div className="container relative z-10 text-white px-4 sm:px-6 lg:px-8">
           <FadeIn>
             <Link 
               href="/resources" 
-              className="inline-flex items-center text-white/90 hover:text-white mb-6 transition-colors group"
+              className="inline-flex items-center text-white/90 hover:text-white mb-4 sm:mb-6 transition-colors group text-sm sm:text-base"
             >
-              <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
+              <FaArrowLeft className="mr-2 text-sm sm:text-base group-hover:-translate-x-1 transition-transform" />
               Back to Resources
             </Link>
-            <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-4">
-              <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-xs md:text-sm">
-                <FaTag className="mr-2" />
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-xs sm:text-sm">
+                <FaTag className="mr-2 text-xs sm:text-sm" />
                 {resource.category}
               </span>
-              <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-xs md:text-sm">
+              <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-xs sm:text-sm">
                 Difficulty: {resource.difficulty}
               </span>
               {resource.estimatedImpact && (
-                <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-xs md:text-sm">
+                <span className="inline-flex items-center px-3 py-1 bg-primary/20 backdrop-blur-sm rounded-full text-xs sm:text-sm">
                   Impact: {resource.estimatedImpact}
                 </span>
               )}
             </div>
-            <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 text-primary">{resource.title}</h1>
-            <p className="text-lg md:text-2xl max-w-2xl text-white/90 mb-6 md:mb-8">{resource.description}</p>
-            <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 text-sm text-white/80">
-              <div className="flex items-center gap-4">
+            <h1 className="text-2xl sm:text-4xl lg:text-6xl font-bold mb-3 sm:mb-4 lg:mb-6 text-primary leading-tight">{resource.title}</h1>
+            <p className="text-base sm:text-lg lg:text-2xl max-w-3xl text-white/90 mb-6 sm:mb-8 leading-relaxed">{resource.description}</p>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 text-sm text-white/80">
+              <div className="flex items-center gap-3 sm:gap-4">
                 {resource.authorImage && (
                   <Image
                     src={resource.authorImage}
                     alt={resource.author}
-                    width={40}
-                    height={40}
-                    className="rounded-full"
+                    width={36}
+                    height={36}
+                    className="rounded-full sm:w-10 sm:h-10"
                   />
                 )}
                 <div>
-                  <div className="font-semibold">{resource.author}</div>
+                  <div className="font-semibold text-sm sm:text-base">{resource.author}</div>
                   {resource.authorRole && (
-                    <div className="text-white/60 text-xs md:text-sm">{resource.authorRole}</div>
+                    <div className="text-white/60 text-xs sm:text-sm">{resource.authorRole}</div>
                   )}
                 </div>
               </div>
-              <div className="flex flex-wrap gap-4 md:gap-6">
+              <div className="flex flex-wrap gap-3 sm:gap-6">
                 <div className="flex items-center gap-2">
-                  <FaCalendar className="text-primary" />
-                  <span>{resource.date}</span>
+                  <FaCalendar className="text-primary text-sm sm:text-base" />
+                  <span className="text-xs sm:text-sm">{resource.date}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <FaClock className="text-primary" />
-                  <span>{resource.readTime}</span>
+                  <FaClock className="text-primary text-sm sm:text-base" />
+                  <span className="text-xs sm:text-sm">{resource.readTime}</span>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
                   <span className="flex items-center gap-1">
-                    <FaEye className="text-primary" />
-                    {resource.views?.toLocaleString()} views
+                    <FaEye className="text-primary text-sm sm:text-base" />
+                    <span className="text-xs sm:text-sm">{resource.views?.toLocaleString()} views</span>
                   </span>
                   <span className="flex items-center gap-1">
-                    <FaHeart className="text-primary" />
-                    {resource.likes?.toLocaleString()} likes
+                    <FaHeart className="text-primary text-sm sm:text-base" />
+                    <span className="text-xs sm:text-sm">{resource.likes?.toLocaleString()} likes</span>
                   </span>
                 </div>
               </div>
@@ -112,16 +112,23 @@ export default function ResourceDetailClient({ resource }: ResourceDetailClientP
       {/* Content Section */}
       <section className="py-20">
         <div className="container max-w-4xl">
-          <div className="sticky top-20 flex justify-end gap-4 mb-12 z-10">
-            <button 
-              className="inline-flex items-center px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
-              onClick={handleShare}
-              aria-label="Share this resource"
-            >
-              <FaShare className="mr-2" />
-              Share
-            </button>
-          </div>
+        <div className="sticky top-20 flex items-center justify-between mb-8 z-10">
+  <Link 
+    href="/resources" 
+    className="inline-flex items-center px-4 py-2 text-primary hover:text-primary/80 transition-colors text-sm"
+  >
+    <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
+    Back to Resources
+  </Link>
+  <button 
+    className="inline-flex items-center px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors shadow-sm text-sm"
+    onClick={handleShare}
+    aria-label="Share this resource"
+  >
+    <FaShare className="mr-2" />
+    Share
+  </button>
+</div>
           <FadeIn>
             <div className="flex flex-wrap gap-2 mb-8">
               {resource.tags.map((tag) => (
