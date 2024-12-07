@@ -11,7 +11,7 @@ export default function EventsClient() {
         {
             id: 1,
             title: "Sustainability Workshop",
-            date: "2024-12-15",
+            date: "2024-12-12",
             time: "01:00 PM",
             location: "Gedung A Univeritas Pembangunan Jaya",
             description: "Learn practical tips for sustainable living.",
