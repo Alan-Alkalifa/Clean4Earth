@@ -10,10 +10,10 @@ export default function EventsClient() {
     const upcomingEvents = [
         {
             id: 1,
-            title: "Sustainability Workshop",
+            title: "Clean4Earth Sustainability Workshop",
             date: "2024-12-12",
-            time: "01:00 PM",
-            location: "Gedung A Univeritas Pembangunan Jaya",
+            time: "10:00 AM - 12:00 AM",
+            location: "Gedung B Lantai 1 - B104",
             description: "Learn practical tips for sustainable living.",
             image: "https://images.unsplash.com/photo-1544928147-79a2dbc1f389?ixlib=rb-4.0.3",
             registrationLink: "/events/sustainable-workshop"
