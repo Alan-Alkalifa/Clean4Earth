@@ -39,7 +39,7 @@ export const resources: Resource[] = [
     views: 1250,
     likes: 342,
     difficulty: "Beginner",
-    estimatedImpact: "Reduce carbon footprint by ~20%",
+    estimatedImpact: "Reduce carbon footprint by ~20% more",
     relatedLinks: [
       {
         title: "EPA Sustainable Living Resources",
