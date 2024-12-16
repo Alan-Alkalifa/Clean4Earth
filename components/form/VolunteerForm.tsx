@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { submitVolunteerForm } from '@/config/database';
+import { supabase, handleSupabaseResponse } from '@/config/supabase';
 
 interface FormData {
   name: string;
@@ -46,30 +46,57 @@ export default function VolunteerForm() {
     setSubmitStatus({ loading: true });
     
     try {
-      const result = await submitVolunteerForm(formData);
-      if (result.success) {
-        setSubmitStatus({ loading: false, success: true });
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          role: 'student',
-          interests: [],
-          availability: '',
-          message: ''
-        });
-      } else {
-        setSubmitStatus({ 
-          loading: false, 
-          success: false, 
-          error: 'Failed to submit form. Please try again.' 
-        });
+      if (!supabase) {
+        throw new Error('Supabase client is not initialized');
       }
-    } catch (error) {
+
+      // Validate interests array is not empty
+      if (formData.interests.length === 0) {
+        throw new Error('Please select at least one area of interest');
+      }
+
+      // Prepare the form data matching Supabase column names
+      const supabaseData = {
+        fullname: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim() || null,
+        role: formData.role,
+        interests: formData.interests,
+        availability: formData.availability || null,
+        message: formData.message.trim() || null,
+        status: 'pending'
+      };
+
+      console.log('Submitting volunteer application:', supabaseData);
+
+      const response = await supabase
+        .from('volunteer_form')
+        .insert([supabaseData])
+        .select()
+        .single();
+
+      const result = handleSupabaseResponse(response, 'Failed to submit volunteer application');
+
+      if (!result.success) {
+        throw new Error(result.error?.message || 'Failed to submit application');
+      }
+
+      setSubmitStatus({ loading: false, success: true });
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        role: 'student',
+        interests: [],
+        availability: '',
+        message: ''
+      });
+    } catch (error: any) {
+      console.error('Submission error:', error);
       setSubmitStatus({ 
         loading: false, 
         success: false, 
-        error: 'An unexpected error occurred. Please try again.' 
+        error: error.message || 'An unexpected error occurred. Please try again.' 
       });
     }
   };

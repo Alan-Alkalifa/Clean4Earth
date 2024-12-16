@@ -2,14 +2,15 @@
 
 import { useState } from 'react';
 import StaggerChildren from '../animations/StaggerChildren';
-import { submitContactForm } from '@/config/database';
+import { supabase } from '@/config/supabase';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     subject: '',
-    message: ''
+    message: '',
+    status: 'pending'
   });
 
   const [submitStatus, setSubmitStatus] = useState<{
@@ -25,27 +26,47 @@ export default function ContactForm() {
     setSubmitStatus({ loading: true });
 
     try {
-      const result = await submitContactForm(formData);
-      if (result.success) {
-        setSubmitStatus({ loading: false, success: true });
-        setFormData({
-          name: '',
-          email: '',
-          subject: '',
-          message: ''
-        });
-      } else {
-        setSubmitStatus({ 
-          loading: false, 
-          success: false, 
-          error: 'Failed to submit message. Please try again.' 
-        });
+      // First, check if Supabase is properly initialized
+      if (!supabase) {
+        throw new Error('Supabase client is not initialized');
       }
-    } catch (error) {
+
+      const { data, error } = await supabase
+        .from('contact_form')
+        .insert([{
+          ...formData,
+          created_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase error details:', {
+          code: error.code,
+          message: error.message,
+          details: error.details
+        });
+        throw error;
+      }
+
+      setSubmitStatus({ loading: false, success: true });
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        message: '',
+        status: 'pending'
+      });
+    } catch (error: any) {
+      console.error('Contact form submission error:', {
+        message: error.message,
+        details: error.details,
+        code: error.code
+      });
       setSubmitStatus({ 
         loading: false, 
         success: false, 
-        error: 'An unexpected error occurred. Please try again.' 
+        error: error.message || 'Failed to submit message. Please try again.' 
       });
     }
   };

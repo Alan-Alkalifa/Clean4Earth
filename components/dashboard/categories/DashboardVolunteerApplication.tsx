@@ -55,20 +55,20 @@ export default function DashboardVolunteerApplication() {
         fetchData();
     }, []);
 
-    const handleStatusUpdate = async (id: string, status: string) => {
+    const handleStatusUpdate = async (id: string, status: 'approved' | 'rejected') => {
         setProcessing(true);
         try {
             const result = await updateVolunteerStatus(id, status);
             if (result.success) {
                 setVolunteers(prev => prev.map(vol => 
-                    vol.id === id ? { ...vol, status } : vol
+                    vol.id === id ? { ...vol, status: status as Volunteer['status'] } : vol
                 ));
             } else {
-                throw new Error('Failed to update status');
+                throw new Error(result.error || 'Failed to update status');
             }
         } catch (err) {
             console.error('Error updating status:', err);
-            setError('Failed to update status');
+            setError(err instanceof Error ? err.message : 'Failed to update status');
         } finally {
             setProcessing(false);
         }
@@ -112,7 +112,7 @@ export default function DashboardVolunteerApplication() {
                 const result = await batchUpdateStatus('volunteer', selectedItems, status);
                 if (result.success) {
                     setVolunteers(prev => prev.map(vol => 
-                        selectedItems.includes(vol.id) ? { ...vol, status } : vol
+                        selectedItems.includes(vol.id) ? { ...vol, status: status as Volunteer['status'] } : vol
                     ));
                     setSelectedItems([]);
                 } else {
@@ -131,12 +131,13 @@ export default function DashboardVolunteerApplication() {
     const getFilteredData = () => {
         return volunteers.filter(item => {
             const searchFields = [
-                item.name,
+                item.fullname,
                 item.email,
                 item.phone,
                 item.role,
-                ...item.interests
-            ];
+                ...item.interests,
+                item.message
+            ].filter(Boolean); // Remove null values
 
             const matchesSearch = filters.search === '' || 
                 searchFields.some(field => 
@@ -195,7 +196,7 @@ export default function DashboardVolunteerApplication() {
             data: getFilteredData(),
             columns: [
                 ...baseColumns,
-                { key: 'name', label: 'Name' },
+                { key: 'fullname', label: 'Name' },
                 { key: 'email', label: 'Email' },
                 { key: 'phone', label: 'Phone' },
                 { key: 'role', label: 'Role' },
@@ -216,6 +217,16 @@ export default function DashboardVolunteerApplication() {
                     )
                 },
                 { key: 'availability', label: 'Availability' },
+                { key: 'message', label: 'Message' },
+                {
+                    key: 'created_at',
+                    label: 'Submitted',
+                    render: (item: Volunteer) => (
+                        <span>
+                            {new Date(item.created_at).toLocaleDateString()}
+                        </span>
+                    )
+                },
                 {
                     key: 'status',
                     label: 'Status',
@@ -236,14 +247,14 @@ export default function DashboardVolunteerApplication() {
                         <div className="flex flex-wrap gap-2">
                             <button
                                 onClick={() => handleStatusUpdate(item.id, 'approved')}
-                                disabled={processing}
+                                disabled={processing || item.status === 'approved'}
                                 className="px-3 py-1.5 text-sm bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
                             >
                                 Approve
                             </button>
                             <button
                                 onClick={() => handleStatusUpdate(item.id, 'rejected')}
-                                disabled={processing}
+                                disabled={processing || item.status === 'rejected'}
                                 className="px-3 py-1.5 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
                             >
                                 Reject

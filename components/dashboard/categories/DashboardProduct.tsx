@@ -10,24 +10,33 @@ import {
     uploadImage,
     type Product 
 } from '@/config/database';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/config/database';
+import { supabase } from '@/config/supabase';
 import DashboardTable from '../DashboardTable';
 
 interface DashboardProductProps {
-    currentPage: number;
-    itemsPerPage: number;
-    onPageChange: (page: number) => void;
-    totalPages: number;
+    itemsPerPage?: number;
 }
 
-export default function DashboardProduct({ currentPage, itemsPerPage, onPageChange, totalPages }: DashboardProductProps) {
+export default function DashboardProduct({ itemsPerPage = 10 }: DashboardProductProps) {
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    useEffect(() => {
+        if (isFormOpen || editingProduct) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isFormOpen, editingProduct]);
 
     const loadProducts = async () => {
         setIsLoading(true);
@@ -51,59 +60,97 @@ export default function DashboardProduct({ currentPage, itemsPerPage, onPageChan
 
     const handleCreate = async (data: Omit<Product, 'id'>) => {
         try {
+            console.log('Attempting to create product:', data);
             const response = await createProduct(data);
-            if (response.success) {
+            
+            if (response.success && response.data) {
+                console.log('Product created successfully:', response.data);
                 await loadProducts();
                 setIsFormOpen(false);
+                setError(null);
             } else {
+                console.error('Failed to create product:', response.error);
                 throw new Error(response.error || 'Failed to create product');
             }
         } catch (err) {
+            console.error('Error in handleCreate:', err);
             setError(err instanceof Error ? err.message : 'An error occurred while creating product');
-            // Don't close the form if there's an error
+            // Keep form open to show error
         }
     };
 
     const handleUpdate = async (id: string, data: Partial<Product>) => {
         try {
+            console.log('Attempting to update product:', { id, data });
             const response = await updateProduct(id, data);
-            if (response.success) {
-                loadProducts();
+            
+            if (response.success && response.data) {
+                console.log('Product updated successfully:', response.data);
+                await loadProducts();
                 setEditingProduct(null);
+                setError(null);
             } else {
-                setError('Failed to update product');
+                console.error('Failed to update product:', response.error);
+                throw new Error(response.error || 'Failed to update product');
             }
         } catch (err) {
-            setError('An error occurred while updating product');
+            console.error('Error in handleUpdate:', err);
+            setError(err instanceof Error ? err.message : 'An error occurred while updating product');
+            // Keep form open to show error
         }
     };
 
     const handleDelete = async (id: string) => {
+        if (!window.confirm('Are you sure you want to delete this product?')) {
+            return;
+        }
+
         try {
+            console.log('Attempting to delete product:', id);
             const response = await deleteProduct(id);
+            
             if (response.success) {
-                loadProducts();
+                console.log('Product deleted successfully');
+                await loadProducts();
+                setError(null);
             } else {
-                setError('Failed to delete product');
+                console.error('Failed to delete product:', response.error);
+                throw new Error(response.error || 'Failed to delete product');
             }
         } catch (err) {
-            setError('An error occurred while deleting product');
+            console.error('Error in handleDelete:', err);
+            setError(err instanceof Error ? err.message : 'An error occurred while deleting product');
         }
     };
 
     const handleBatchDelete = async () => {
         if (selectedIds.length === 0) return;
+        
+        if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} selected products?`)) {
+            return;
+        }
+
         try {
+            console.log('Attempting to batch delete products:', selectedIds);
             const response = await batchDeleteProducts(selectedIds);
+            
             if (response.success) {
-                loadProducts();
+                console.log('Products deleted successfully');
+                await loadProducts();
                 setSelectedIds([]);
+                setError(null);
             } else {
-                setError('Failed to delete selected products');
+                console.error('Failed to delete products:', response.error);
+                throw new Error(response.error || 'Failed to delete selected products');
             }
         } catch (err) {
-            setError('An error occurred while deleting products');
+            console.error('Error in handleBatchDelete:', err);
+            setError(err instanceof Error ? err.message : 'An error occurred while deleting products');
         }
+    };
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
     };
 
     const columns = [
@@ -154,6 +201,10 @@ export default function DashboardProduct({ currentPage, itemsPerPage, onPageChan
             )
         }
     ];
+
+    useEffect(() => {
+        setTotalPages(Math.ceil(products.length / itemsPerPage));
+    }, [products, itemsPerPage]);
 
     if (isLoading) {
         return (
@@ -211,7 +262,7 @@ export default function DashboardProduct({ currentPage, itemsPerPage, onPageChan
                 {[...Array(totalPages).keys()].map((page) => (
                     <button
                         key={page}
-                        onClick={() => onPageChange(page + 1)}
+                        onClick={() => handlePageChange(page + 1)}
                         className={`px-4 py-2 text-sm ${currentPage === page + 1 ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700'} rounded-md hover:bg-gray-200 transition-colors`}
                     >
                         {page + 1}
@@ -221,11 +272,26 @@ export default function DashboardProduct({ currentPage, itemsPerPage, onPageChan
 
             {/* Add/Edit Product Form Modal */}
             {(isFormOpen || editingProduct) && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-6 rounded-lg w-full max-w-md">
-                        <h3 className="text-lg font-semibold mb-4">
-                            {editingProduct ? 'Edit Product' : 'Add New Product'}
-                        </h3>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 overflow-y-auto">
+                    <div className="relative bg-white rounded-lg w-full max-w-4xl my-8">
+                        <div className="sticky top-0 bg-white px-6 py-4 border-b z-10">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-semibold">
+                                    {editingProduct ? 'Edit Product' : 'Add New Product'}
+                                </h3>
+                                <button
+                                    onClick={() => {
+                                        setIsFormOpen(false);
+                                        setEditingProduct(null);
+                                    }}
+                                    className="text-gray-400 hover:text-gray-500"
+                                >
+                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                         <ProductForm
                             initialData={editingProduct}
                             onSubmit={(data) => editingProduct 
@@ -244,37 +310,11 @@ export default function DashboardProduct({ currentPage, itemsPerPage, onPageChan
     );
 }
 
-// ProductImage component to handle both Firestore IDs and direct URLs
+// ProductImage component to handle image URLs
 function ProductImage({ image }: { image: string }) {
-    const [imageUrl, setImageUrl] = useState<string>('');
     const [error, setError] = useState(false);
 
-    useEffect(() => {
-        const fetchImage = async () => {
-            try {
-                // Check if the image is a URL
-                const isUrl = image.startsWith('http') || image.startsWith('https');
-                if (isUrl) {
-                    setImageUrl(image);
-                } else {
-                    // Treat as Firestore ID
-                    const imageDoc = await getDoc(doc(db, 'images', image));
-                    if (imageDoc.exists()) {
-                        setImageUrl(imageDoc.data().data);
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading image:', error);
-                setError(true);
-            }
-        };
-
-        if (image) {
-            fetchImage();
-        }
-    }, [image]);
-
-    if (error || !imageUrl) {
+    if (!image) {
         return (
             <div className="w-full h-full bg-gray-200 rounded-md flex items-center justify-center">
                 <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -286,7 +326,7 @@ function ProductImage({ image }: { image: string }) {
 
     return (
         <img
-            src={imageUrl}
+            src={image}
             alt="Product"
             className="w-full h-full object-cover rounded-md"
             onError={() => setError(true)}
@@ -352,16 +392,36 @@ function ProductForm({ initialData, onSubmit, onCancel }: ProductFormProps) {
         e.preventDefault();
         setError(null);
         
-        if (formData.image && !validateImageUrl(formData.image)) {
-            setError('Please enter a valid Unsplash URL or direct image URL (ending in .jpg, .jpeg, .png, or .gif)');
-            return;
-        }
-
-        setIsSubmitting(true);
         try {
+            setIsSubmitting(true);
+            
+            // Validate required fields
+            if (!formData.name || !formData.category || formData.price < 0 || formData.quantity < 0) {
+                setError('Please fill in all required fields with valid values');
+                return;
+            }
+
+            // Validate image if present
+            if (formData.image && !validateImageUrl(formData.image)) {
+                setError('Please enter a valid image URL or upload an image');
+                return;
+            }
+
+            console.log('Submitting form data:', formData);
             await onSubmit(formData);
+            
+            // Clear form data after successful submission
+            setFormData({
+                name: '',
+                price: 0,
+                description: '',
+                image: '',
+                category: '',
+                quantity: 0
+            });
+            
         } catch (error) {
-            console.error('Error submitting form:', error);
+            console.error('Form submission error:', error);
             setError(error instanceof Error ? error.message : 'An unexpected error occurred');
         } finally {
             setIsSubmitting(false);
@@ -369,9 +429,9 @@ function ProductForm({ initialData, onSubmit, onCancel }: ProductFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-sm">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {error && (
-                <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-md">
+                <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-md mb-6">
                     <div className="flex">
                         <div className="flex-shrink-0">
                             <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -426,24 +486,57 @@ function ProductForm({ initialData, onSubmit, onCancel }: ProductFormProps) {
             </div>
 
             <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Image URL</label>
+                <label className="block text-sm font-medium text-gray-700">Product Image</label>
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                     <div className="text-sm text-gray-600 mb-3">
-                        Find a free image on <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary-dark font-medium">Unsplash</a>
+                        Upload a product image (max 5MB)
                     </div>
                     <input
-                        type="url"
-                        placeholder="Enter Unsplash URL (e.g., https://images.unsplash.com/photo-...)"
-                        value={formData.image}
-                        onChange={handleImageUrlChange}
-                        className="block w-full rounded-md p-2 border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors"
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+
+                            // Validate file size (5MB limit)
+                            if (file.size > 5 * 1024 * 1024) {
+                                setError('Image size must be less than 5MB');
+                                return;
+                            }
+
+                            try {
+                                setIsSubmitting(true);
+                                setError(null);
+                                console.log('Starting image upload for file:', file.name);
+                                
+                                const imageUrl = await uploadImage(file);
+                                console.log('Upload successful, URL:', imageUrl);
+                                
+                                setFormData(prev => ({ ...prev, image: imageUrl }));
+                            } catch (err) {
+                                console.error('Detailed upload error:', {
+                                    error: err,
+                                    message: err instanceof Error ? err.message : 'Unknown error',
+                                    type: err instanceof Error ? err.name : typeof err,
+                                    details: JSON.stringify(err, null, 2)
+                                });
+                                
+                                setError(err instanceof Error 
+                                    ? `Upload failed: ${err.message}` 
+                                    : 'Failed to upload image. Please try again.');
+                            } finally {
+                                setIsSubmitting(false);
+                            }
+                        }}
+                        className="block w-full text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-md file:border-0
+                            file:text-sm file:font-medium
+                            file:bg-primary file:text-white
+                            hover:file:cursor-pointer hover:file:bg-primary-dark
+                            file:disabled:opacity-50 file:disabled:cursor-not-allowed"
+                        disabled={isSubmitting}
                     />
-                    <div className="mt-2 text-xs text-gray-500 flex items-center">
-                        <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Click on any image on Unsplash, then click the download button and copy the URL
-                    </div>
                     {formData.image && (
                         <div className="mt-4">
                             <label className="block text-sm font-medium text-gray-700 mb-2">Preview</label>
@@ -486,7 +579,7 @@ function ProductForm({ initialData, onSubmit, onCancel }: ProductFormProps) {
                 </div>
             </div>
 
-            <div className="flex justify-end space-x-3 pt-4 border-t">
+            <div className="flex justify-end space-x-3 pt-4 border-t sticky bottom-0 bg-white z-10 pb-2">
                 <button
                     type="button"
                     onClick={onCancel}

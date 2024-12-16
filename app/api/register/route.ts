@@ -1,21 +1,29 @@
 import { NextResponse } from 'next/server';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '@/config/database';
+import { supabase } from '@/config/supabase';
 
 export async function POST(request: Request) {
     try {
         const data = await request.json();
         
-        // Add registration to Firestore
-        const docRef = await addDoc(collection(db, 'registrations'), {
-            ...data,
-            createdAt: new Date().toISOString()
-        });
+        // Add registration to Supabase
+        const { data: registration, error } = await supabase
+            .from('registrations')
+            .insert([{
+                ...data,
+                status: 'pending',
+                timestamp: new Date().toISOString()
+            }])
+            .select()
+            .single();
+
+        if (error) {
+            throw error;
+        }
 
         return NextResponse.json({ 
             success: true, 
             message: 'Registration successful! We will contact you shortly.',
-            registrationId: docRef.id
+            registrationId: registration.id
         });
     } catch (error) {
         console.error('Registration error:', error);

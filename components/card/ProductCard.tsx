@@ -4,15 +4,27 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import FadeIn from '@/components/animations/FadeIn';
 import StaggerChildren from '@/components/animations/StaggerChildren';
-import { Product, fetchProducts } from '../../config/database';
-
-const categories = ["all", "Lifestyle", "Kitchen", "Bags"] as const;
+import { Product, fetchProducts, getUniqueCategories } from '../../config/database';
 
 export default function ProductList() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [categories, setCategories] = useState<string[]>(['all']);
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const fetchedCategories = await getUniqueCategories();
+        setCategories(fetchedCategories);
+      } catch (err) {
+        console.error('Error loading categories:', err);
+      }
+    };
+
+    loadCategories();
+  }, []);
 
   useEffect(() => {
     const loadProducts = async () => {

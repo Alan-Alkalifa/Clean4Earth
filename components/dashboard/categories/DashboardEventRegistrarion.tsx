@@ -43,12 +43,14 @@ export default function DashboardEventRegistration() {
                 if (result.success) {
                     setRegistrations(result.data);
                 } else {
-                    console.error('Failed to fetch registrations:', result.error);
-                    setError('Failed to fetch registrations');
+                    const errorMessage = result.error || 'Failed to fetch registrations';
+                    console.error('Failed to fetch registrations:', errorMessage);
+                    setError(errorMessage);
                 }
             } catch (err) {
-                console.error('Error fetching registrations:', err);
-                setError(err instanceof Error ? err.message : 'Failed to fetch registrations');
+                const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+                console.error('Error fetching registrations:', errorMessage);
+                setError(errorMessage);
             } finally {
                 setIsLoading(false);
             }
@@ -133,11 +135,11 @@ export default function DashboardEventRegistration() {
     const getFilteredData = () => {
         return registrations.filter(item => {
             const searchFields = [
-                item.fullName,
+                item.fullname,
                 item.email,
                 item.phone,
                 item.organization,
-                item.eventTitle
+                item.eventtitle
             ];
 
             const matchesSearch = filters.search === '' || 
@@ -203,14 +205,14 @@ export default function DashboardEventRegistration() {
             data: getFilteredData(),
             columns: [
                 ...baseColumns,
-                { key: 'fullName', label: 'Name' },
+                { key: 'fullname', label: 'Name' },
                 { key: 'email', label: 'Email' },
                 { key: 'phone', label: 'Phone' },
                 { key: 'organization', label: 'Organization' },
-                { key: 'eventTitle', label: 'Event' },
-                { key: 'eventDate', label: 'Event Date' },
-                { key: 'eventTime', label: 'Event Time' },
-                { key: 'numberOfGuests', label: 'Guests' },
+                { key: 'eventtitle', label: 'Event' },
+                { key: 'eventdate', label: 'Event Date' },
+                { key: 'eventtime', label: 'Event Time' },
+                { key: 'numberofguests', label: 'Guests' },
                 { key: 'status', label: 'Status' },
                 { key: 'timestamp', label: 'Registration Date' },
                 {

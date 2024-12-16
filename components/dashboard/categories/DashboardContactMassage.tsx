@@ -104,7 +104,7 @@ export default function DashboardContactMessage() {
                     field?.toLowerCase().includes(filters.search.toLowerCase())
                 );
 
-            const itemDate = new Date(item.timestamp);
+            const itemDate = new Date(item.created_at);
             const matchesStartDate = !filters.startDate || 
                 itemDate >= new Date(filters.startDate);
             const matchesEndDate = !filters.endDate || 
@@ -163,7 +163,7 @@ export default function DashboardContactMessage() {
                 { key: 'email', label: 'Email' },
                 { key: 'subject', label: 'Subject' },
                 { key: 'message', label: 'Message' },
-                { key: 'timestamp', label: 'Date' },
+                { key: 'created_at', label: 'Date' },
                 {
                     key: 'actions',
                     label: 'Actions',
