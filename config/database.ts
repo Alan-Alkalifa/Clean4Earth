@@ -1,5 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, query, orderBy, getDocs, doc, updateDoc, deleteDoc, writeBatch, startAt, endAt } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, orderBy, getDocs, doc, updateDoc, deleteDoc, writeBatch, startAt, endAt, serverTimestamp } from 'firebase/firestore';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDvNDsvypNNhduM9RwL9rB3kQhar6dOeDk",
@@ -14,6 +16,19 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
+
+// Initialize authentication
+export const initializeAuth = async (email: string, password: string) => {
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        return { success: true, user: userCredential.user };
+    } catch (error) {
+        console.error('Authentication error:', error);
+        return { success: false, error };
+    }
+};
 
 export interface FormData {
     id: string;
@@ -53,6 +68,16 @@ export interface Contact extends FormData {
     message: string;
 }
 
+export interface Product {
+    id: string;
+    name: string;
+    price: number;
+    description: string;
+    image: string;
+    category: string;
+    quantity: number;
+}
+
 export interface FetchResponse<T> {
     success: boolean;
     data: T[];
@@ -73,7 +98,7 @@ export const submitVolunteerForm = async (formData: {
     interests: string[];
     availability: string;
     message: string;
-}) => {
+}): Promise<OperationResponse> => {
     try {
         const docRef = await addDoc(collection(db, 'volunteerForms'), {
             ...formData,
@@ -92,7 +117,7 @@ export const submitContactForm = async (formData: {
     email: string;
     subject: string;
     message: string;
-}) => {
+}): Promise<OperationResponse> => {
     try {
         const docRef = await addDoc(collection(db, 'contactForms'), {
             ...formData,
@@ -116,7 +141,7 @@ export const submitRegistrationForm = async (formData: {
     eventTitle: string;
     eventDate: string;
     eventTime: string;
-}) => {
+}): Promise<OperationResponse> => {
     try {
         const docRef = await addDoc(collection(db, 'registrations'), {
             ...formData,
@@ -129,38 +154,6 @@ export const submitRegistrationForm = async (formData: {
         return { success: false, error };
     }
 };
-
-export interface Registration {
-    id: string;
-    fullName: string;
-    email: string;
-    phone: string;
-    eventTitle: string;
-    numberOfGuests: number;
-    status: string;
-    timestamp: string;
-}
-
-export interface Volunteer {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    role: string;
-    interests: string[];
-    availability: string;
-    status: string;
-    timestamp: string;
-}
-
-export interface Contact {
-    id: string;
-    name: string;
-    email: string;
-    subject: string;
-    message: string;
-    timestamp: string;
-}
 
 export const fetchRegistrations = async (): Promise<FetchResponse<Registration>> => {
     try {
@@ -367,7 +360,7 @@ export const searchRecords = async <T>(
         );
 
         const snapshot = await getDocs(q);
-        
+
         return {
             success: true,
             data: snapshot.docs.map(doc => ({
@@ -378,6 +371,146 @@ export const searchRecords = async <T>(
     } catch (error) {
         console.error(`Error searching ${type}:`, error);
         return { success: false, error, data: [] };
+    }
+};
+
+export const uploadProducts = async (products: Product[]): Promise<OperationResponse> => {
+    try {
+        const batch = writeBatch(db);
+        
+        products.forEach(product => {
+            const docRef = doc(db, 'products', product.id);
+            batch.set(docRef, {
+                ...product,
+                timestamp: new Date().toISOString()
+            });
+        });
+
+        await batch.commit();
+        return { success: true };
+    } catch (error) {
+        console.error('Error uploading products:', error);
+        return { success: false, error };
+    }
+};
+
+export const fetchProducts = async (): Promise<FetchResponse<Product>> => {
+    try {
+        const q = query(collection(db, 'products'), orderBy('id'));
+        const snapshot = await getDocs(q);
+        const products = snapshot.docs.map(doc => ({
+            ...doc.data()
+        })) as Product[];
+        
+        return { success: true, data: products };
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        return { success: false, error, data: [] };
+    }
+};
+
+// Product CRUD Operations
+export async function deleteProduct(id: string): Promise<OperationResponse> {
+    try {
+        const docRef = doc(db, 'products', id);
+        await deleteDoc(docRef);
+        return { success: true, id };
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        return { success: false, error };
+    }
+}
+
+export async function batchDeleteProducts(ids: string[]): Promise<OperationResponse> {
+    try {
+        const batch = writeBatch(db);
+        ids.forEach(id => {
+            const docRef = doc(db, 'products', id);
+            batch.delete(docRef);
+        });
+        await batch.commit();
+        return { success: true };
+    } catch (error) {
+        console.error('Error batch deleting products:', error);
+        return { success: false, error };
+    }
+}
+
+export async function updateProduct(id: string, data: Partial<Product>): Promise<OperationResponse> {
+    try {
+        const docRef = doc(db, 'products', id);
+        await updateDoc(docRef, { ...data, updatedAt: serverTimestamp() });
+        return { success: true, id };
+    } catch (error) {
+        console.error('Error updating product:', error);
+        return { success: false, error };
+    }
+}
+
+export async function createProduct(data: Omit<Product, 'id'>): Promise<OperationResponse> {
+    try {
+        const docRef = await addDoc(collection(db, 'products'), {
+            ...data,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+        });
+        
+        // Update the document with its ID
+        const productRef = doc(db, 'products', docRef.id);
+        await updateDoc(productRef, { id: docRef.id });
+        
+        return { success: true, id: docRef.id };
+    } catch (error) {
+        console.error('Error creating product:', error);
+        return { success: false, error };
+    }
+}
+
+// Upload image to Firestore
+export const uploadImage = async (file: File): Promise<string> => {
+    try {
+        // Check file size (limit to 5MB)
+        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+        if (file.size > maxSize) {
+            throw new Error('Image size should be less than 5MB');
+        }
+
+        // Validate file type
+        if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+            throw new Error('Only JPG, JPEG, and PNG files are allowed');
+        }
+
+        // Create a new FileReader instance
+        const reader = new FileReader();
+
+        // Convert image file to base64
+        const base64String = await new Promise<string>((resolve, reject) => {
+            reader.onload = () => {
+                if (typeof reader.result === 'string') {
+                    resolve(reader.result);
+                } else {
+                    reject(new Error('Failed to convert image to base64'));
+                }
+            };
+            reader.onerror = () => {
+                reject(new Error('Failed to read file'));
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Create a document in Firestore to store the image
+        const imageDoc = await addDoc(collection(db, 'images'), {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            data: base64String,
+            uploadedAt: serverTimestamp()
+        });
+
+        return imageDoc.id;
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        throw error;
     }
 };
 

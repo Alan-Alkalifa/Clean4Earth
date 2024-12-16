@@ -13,6 +13,7 @@ export default function Navigation() {
     { name: 'About', href: '/about' },
     { name: 'Campaign', href: '/campaign' },
     { name: 'Events', href: '/events' },
+    { name: 'Products', href: '/products' },
     { name: 'Resources', href: '/resources' },
     { name: 'Get Involved', href: '/get-involved' },
     { name: 'Contact', href: '/contact' },
