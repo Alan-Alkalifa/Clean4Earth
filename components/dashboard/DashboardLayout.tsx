@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { fetchProducts } from '@/config/database';
 import DashboardVolunteerApplication from './categories/DashboardVolunteerApplication';
 import DashboardEventRegistration from './categories/DashboardEventRegistrarion';
@@ -18,26 +18,6 @@ interface PaginationState {
 
 export default function DashboardLayout() {
     const [activeTab, setActiveTab] = useState<TabType>('volunteers');
-    const [pagination, setPagination] = useState<PaginationState>({
-        currentPage: 1,
-        itemsPerPage: 10,
-        totalItems: 0
-    });
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const itemsPerPage = 10;
-
-    useEffect(() => {
-        // Calculate total pages based on data length
-        const calculateTotalPages = async () => {
-            const response = await fetchProducts();
-            if (response.success) {
-                setTotalPages(Math.ceil(response.data.length / itemsPerPage));
-            }
-        };
-        calculateTotalPages();
-    }, []);
 
     const tabs = [
         { id: 'volunteers', label: 'Volunteer Applications' },
@@ -45,32 +25,6 @@ export default function DashboardLayout() {
         { id: 'contacts', label: 'Contact Messages' },
         { id: 'products', label: 'Products' }
     ];
-
-    const handlePageChange = (newPage: number) => {
-        setPagination(prev => ({
-            ...prev,
-            currentPage: newPage
-        }));
-    };
-
-    const handleTotalItemsChange = (total: number) => {
-        setPagination(prev => ({
-            ...prev,
-            totalItems: total,
-            currentPage: prev.currentPage > Math.ceil(total / prev.itemsPerPage) 
-                ? 1 
-                : prev.currentPage
-        }));
-    };
-
-    const getPaginationProps = () => {
-        const totalPages = Math.ceil(pagination.totalItems / pagination.itemsPerPage);
-        return {
-            currentPage: pagination.currentPage,
-            totalPages,
-            onPageChange: handlePageChange
-        };
-    };
 
     return (
         <div className="container mx-auto mt-10 sm:mt-6 md:mt-10 px-2 sm:px-4 py-4 sm:py-6 md:py-8">
@@ -82,7 +36,6 @@ export default function DashboardLayout() {
                             key={tab.id}
                             onClick={() => {
                                 setActiveTab(tab.id as TabType);
-                                setPagination(prev => ({ ...prev, currentPage: 1 }));
                             }}
                             className={`
                                 whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm
@@ -105,7 +58,9 @@ export default function DashboardLayout() {
                     <>
                         <DashboardVolunteerApplication />
                         <Pagination
-                            {...getPaginationProps()}
+                            currentPage={1}
+                            totalPages={1}
+                            onPageChange={() => {}}
                         />
                     </>
                 )}
@@ -113,7 +68,9 @@ export default function DashboardLayout() {
                     <>
                         <DashboardEventRegistration />
                         <Pagination
-                            {...getPaginationProps()}
+                            currentPage={1}
+                            totalPages={1}
+                            onPageChange={() => {}}
                         />
                     </>
                 )}
@@ -121,18 +78,15 @@ export default function DashboardLayout() {
                     <>
                         <DashboardContactMessage />
                         <Pagination
-                            {...getPaginationProps()}
+                            currentPage={1}
+                            totalPages={1}
+                            onPageChange={() => {}}
                         />
                     </>
                 )}
                 {activeTab === 'products' && (
                     <>
-                        <DashboardProduct 
-                            currentPage={currentPage}
-                            itemsPerPage={itemsPerPage}
-                            onPageChange={setCurrentPage}
-                            totalPages={totalPages}
-                        />
+                        <DashboardProduct />
                     </>
                 )}
             </div>
