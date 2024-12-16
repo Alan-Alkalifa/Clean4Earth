@@ -14,7 +14,7 @@ export default async function ProductsPage() {
       <section className="relative h-[50vh] flex items-center">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=1000&auto=format&fit=crop"
+            src="https://images.unsplash.com/photo-1605600659908-0ef719419d41?q=80&w=2000&auto=format&fit=crop"
             alt="Eco-Friendly Products Banner"
             fill
             className="object-cover brightness-50"
