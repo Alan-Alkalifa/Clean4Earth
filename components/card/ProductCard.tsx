@@ -4,64 +4,47 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import FadeIn from '@/components/animations/FadeIn';
 import StaggerChildren from '@/components/animations/StaggerChildren';
-import { Product, fetchProducts, getUniqueCategories } from '../../config/database';
+import Toast from '@/components/ui/Toast';
+import { Product, fetchProducts, getUniqueCategories } from '../../utils/database';
+import { useCart } from '@/context/CartContext';
 
 export default function ProductList() {
-  const [categories, setCategories] = useState<string[]>(['all']);
+  const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const { addToCart } = useCart();
 
   useEffect(() => {
-    const loadCategories = async () => {
+    const loadData = async () => {
+      setLoading(true);
       try {
-        const fetchedCategories = await getUniqueCategories();
-        setCategories(fetchedCategories);
-      } catch (err) {
-        console.error('Error loading categories:', err);
+        const cats = await getUniqueCategories();
+        setCategories(['all', ...cats.filter(cat => cat !== 'all')]);
+        const prods = await fetchProducts();
+        setProducts(prods.data || []);
+      } catch (error) {
+        console.error('Error loading products:', error);
       }
+      setLoading(false);
     };
-
-    loadCategories();
+    loadData();
   }, []);
 
-  useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const result = await fetchProducts();
-        if (result.success) {
-          setProducts(result.data);
-        } else {
-          setError('Failed to load products');
-        }
-      } catch (err) {
-        setError('Error loading products');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const filteredProducts = selectedCategory === 'all'
+    ? products
+    : products.filter(product => product.category === selectedCategory);
 
-    loadProducts();
-  }, []);
-
-  const filteredProducts = selectedCategory === "all" 
-    ? products 
-    : products.filter(product => product.category.toLowerCase() === selectedCategory.toLowerCase());
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    setShowToast(true);
+  };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <p className="text-red-500">{error}</p>
       </div>
     );
   }
@@ -106,27 +89,35 @@ export default function ProductList() {
                   {product.name}
                 </h3>
                 <span className="text-primary font-bold">
-                  ${product.price}
+                  Rp.{product.price}
                 </span>
               </div>
               <p className="text-gray-600 mb-2">{product.description}</p>
-              <p className="text-sm text-gray-500 mb-4">
-                Stock: {product.quantity} units
+              <p className="text-gray-500 text-sm">
+                Stock: {product.quantity} 
               </p>
               <button 
                 className={`w-full py-2 rounded-lg transition-colors duration-300 ${
                   product.quantity > 0 
-                    ? "bg-primary text-white hover:bg-primary/90" 
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    ? 'bg-primary text-white hover:bg-primary-dark' 
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
+                onClick={() => product.quantity > 0 && handleAddToCart(product)}
                 disabled={product.quantity === 0}
               >
-                {product.quantity > 0 ? "Add to Cart" : "Out of Stock"}
+                {product.quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
               </button>
             </div>
           </div>
         ))}
       </StaggerChildren>
+      {showToast && (
+        <Toast
+          message="Added to cart successfully!"
+          type="success"
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </>
   );
 }

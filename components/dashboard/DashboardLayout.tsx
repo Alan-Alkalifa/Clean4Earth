@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { fetchProducts } from '@/config/database';
+import { fetchProducts } from '@/utils/database';
 import DashboardVolunteerApplication from './categories/DashboardVolunteerApplication';
 import DashboardEventRegistration from './categories/DashboardEventRegistrarion';
 import DashboardContactMessage from './categories/DashboardContactMassage';

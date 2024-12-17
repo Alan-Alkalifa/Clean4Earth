@@ -9,8 +9,8 @@ import {
     batchDeleteProducts,
     uploadImage,
     type Product 
-} from '@/config/database';
-import { supabase } from '@/config/supabase';
+} from '@/utils/database';
+import { supabase } from '@/utils/supabase';
 import DashboardTable from '../DashboardTable';
 
 interface DashboardProductProps {

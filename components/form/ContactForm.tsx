@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import StaggerChildren from '../animations/StaggerChildren';
-import { supabase } from '@/config/supabase';
+import { supabase } from '@/utils/supabase';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({

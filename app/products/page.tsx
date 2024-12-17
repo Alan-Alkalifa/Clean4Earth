@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import FadeIn from '@/components/animations/FadeIn';
 import StaggerChildren from '@/components/animations/StaggerChildren';
-import { fetchProducts } from '@/config/database';
+import { fetchProducts } from '@/utils/database';
 import ProductList from '@/components/card/ProductCard';
 
 export default async function ProductsPage() {

@@ -8,7 +8,7 @@ import {
     batchUpdateStatus,
     batchDelete,
     type Registration
-} from '@/config/database';
+} from '@/utils/database';
 import DashboardTable from '../DashboardTable';
 
 type Column = {

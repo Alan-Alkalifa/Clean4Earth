@@ -4,6 +4,7 @@ import "./globals.css";
 import Navigation from "../components/layout/Navigation";
 import Footer from "../components/layout/Footer";
 import { Analytics } from "@vercel/analytics/react"
+import { CartProvider } from '@/context/CartContext'
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -23,13 +24,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <script 
+          type="text/javascript"
+          src="https://app.sandbox.midtrans.com/snap/snap.js"
+          data-client-key="SB-Mid-client-sVP2BWevx_ML4K7d"
+        />
+      </head>
       <Analytics />
       <body className={`${poppins.variable} font-poppins flex flex-col min-h-screen`}>
-        <Navigation />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
+        <CartProvider>
+          <Navigation />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

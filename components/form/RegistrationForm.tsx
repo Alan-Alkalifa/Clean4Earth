@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, FormEvent, ChangeEvent } from 'react';
-import { supabase } from '@/config/supabase';
+import { supabase } from '@/utils/supabase';
 
 interface FormData {
     full_name: string;

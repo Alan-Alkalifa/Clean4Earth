@@ -6,7 +6,7 @@ import {
     deleteContact,
     batchDelete,
     type Contact
-} from '@/config/database';
+} from '@/utils/database';
 import DashboardTable from '../DashboardTable';
 
 type Column = {
