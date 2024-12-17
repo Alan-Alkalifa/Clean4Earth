@@ -9,6 +9,19 @@ import RegistrationForm from '../form/RegistrationForm';
 export default function EventsClient() {
     const upcomingEvents = [
         {
+            id: 4,
+            title: "Exhibition Clean4Earth",
+            date: "2024-12-23",
+            time: "07:00 AM - 03.00 PM",
+            location: "Aula Lantai 3 Gedung B UPJ",
+            description: "Come and learn about our sustainability initiatives.",
+            image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3",
+            registrationLink: "/events/open-booth-campaign"
+        }
+    ];
+
+    const pastEvents = [
+        {
             id: 1,
             title: "Clean4Earth Sustainability Workshop",
             date: "2024-12-12",
@@ -29,30 +42,7 @@ export default function EventsClient() {
             registrationLink: "/events/online-campaign"
         },
         {
-            id: 3,
-            title: "Exhibition Clean4Earth",
-            date: "2024-12-23",
-            time: "07:00 AM - 03.00 PM",
-            location: "Aula Lantai 3 Gedung B UPJ",
-            description: "Come and learn about our sustainability initiatives.",
-            image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3",
-            registrationLink: "/events/open-booth-campaign"
-        }
-    ];
-
-    const pastEvents = [
-        {
-            id: 3,
-            title: "Sustainability Workshop",
-            date: "2024-11-15",
-            time: "01:00 PM",
-            location: "Gedung A Universitas Pembangunan Jaya",
-            description: "Introduction to sustainable practices and eco-friendly living.",
-            image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3",
-            registrationLink: "/events/sustainable-workshop"
-        },
-        {
-            id: 4,
+            id: 2,
             title: "Clean4Earth Introducer",
             date: "2024-11-23",
             time: "09:00 AM",
@@ -97,6 +87,7 @@ export default function EventsClient() {
                                 <div key={event.id} className="w-full">
                                     <EventCard 
                                         {...event}
+                                        isPast={true}
                                     />
                                 </div>
                             </FadeIn>

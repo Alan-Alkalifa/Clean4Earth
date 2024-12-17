@@ -12,6 +12,7 @@ interface EventCardProps {
   description: string;
   image: string;
   registrationLink: string;
+  isPast?: boolean;
 }
 
 const CalendarIcon = () => (
@@ -41,6 +42,7 @@ export default function EventCard({
   description,
   image,
   registrationLink,
+  isPast,
 }: EventCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -75,12 +77,14 @@ export default function EventCard({
             </div>
           </div>
           <p className="mb-6 text-gray-600 line-clamp-3">{description}</p>
-          <Link
-            href={registrationLink}
-            className="block w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 text-center"
-          >
-            Register Now
-          </Link>
+          {!isPast && (
+            <Link
+              href={registrationLink}
+              className="block w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 text-center"
+            >
+              Register Now
+            </Link>
+          )}
         </div>
       </div>
     </>
