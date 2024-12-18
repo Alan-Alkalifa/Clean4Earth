@@ -183,7 +183,7 @@ export default function Cart() {
                 <div className="flex-grow flex flex-col sm:flex-row items-center sm:items-start sm:justify-between w-full gap-4">
                   <div className="text-center sm:text-left">
                     <h3 className="text-xl font-semibold text-secondary">{item.name}</h3>
-                    <p className="text-primary text-lg mt-1">Rp.{item.price}</p>
+                    <p className="text-primary text-lg mt-1">IDR.{item.price}</p>
                     {(isOutOfStock || exceedsStock) && (
                       <p className="text-red-500 text-sm mt-1">
                         {isOutOfStock ? 'Out of stock' : `Only ${availableStock} available`}
@@ -227,7 +227,7 @@ export default function Cart() {
       <div className="border-t p-6 space-y-4 bg-gray-50">
         <div className="flex justify-between items-center">
           <span className="text-xl font-semibold text-secondary">Total:</span>
-          <span className="text-2xl font-bold text-primary">Rp.{getTotalPrice()}</span>
+          <span className="text-2xl font-bold text-primary">IDR.{getTotalPrice()}</span>
         </div>
         <button
           className="w-full py-4 bg-primary text-white rounded-xl hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-medium"
