@@ -28,8 +28,8 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <script 
           type="text/javascript"
-          src="https://app.sandbox.midtrans.com/snap/snap.js"
-          data-client-key="SB-Mid-client-sVP2BWevx_ML4K7d"
+          src="https://app.midtrans.com/snap/snap.js"
+          data-client-key="Mid-client-oK9RZNfZ6G-HuQYM"
         />
       </head>
       <Analytics />

@@ -16,7 +16,7 @@ export default function ProductList() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
-  const { addToCart, getCartItemQuantity } = useCart();
+  const { addToCart, getCartItemQuantity, isPaymentInProgress } = useCart();
 
   useEffect(() => {
     const loadData = async () => {
@@ -39,6 +39,13 @@ export default function ProductList() {
     : products.filter(product => product.category === selectedCategory);
 
   const handleAddToCart = (product: Product) => {
+    if (isPaymentInProgress) {
+      setToastMessage('Cannot add items during payment process');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+
     const currentQuantityInCart = getCartItemQuantity(product.id);
     
     if (currentQuantityInCart >= product.quantity) {
@@ -118,13 +125,19 @@ export default function ProductList() {
                 <button 
                   className={`w-full py-3 rounded-lg transition-all duration-300 font-medium ${
                     product.quantity > 0 
-                      ? 'bg-primary text-white hover:bg-primary-dark hover:shadow-md transform hover:scale-[1.02]' 
+                      ? isPaymentInProgress
+                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : 'bg-primary text-white hover:bg-primary-dark hover:shadow-md transform hover:scale-[1.02]' 
                       : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   }`}
                   onClick={() => product.quantity > 0 && handleAddToCart(product)}
-                  disabled={product.quantity === 0}
+                  disabled={product.quantity === 0 || isPaymentInProgress}
                 >
-                  {product.quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
+                  {product.quantity > 0 
+                    ? isPaymentInProgress 
+                      ? 'Payment in Progress'
+                      : 'Add to Cart' 
+                    : 'Out of Stock'}
                 </button>
               </div>
             </div>

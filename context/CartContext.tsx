@@ -15,12 +15,19 @@ interface CartContextType {
   clearCart: () => void;
   getTotalPrice: () => number;
   getCartItemQuantity: (productId: string) => number;
+  isPaymentInProgress: boolean;
+  setPaymentStatus: (token: string | null, order: string | null) => void;
+  orderId: string | null;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [paymentToken, setPaymentToken] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
+
+  const isPaymentInProgress = !!(paymentToken || orderId);
 
   const addToCart = (product: Product) => {
     setItems(currentItems => {
@@ -61,6 +68,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return item ? item.quantity : 0;
   };
 
+  const setPaymentStatus = (token: string | null, order: string | null) => {
+    setPaymentToken(token);
+    setOrderId(order);
+  };
+
   return (
     <CartContext.Provider value={{
       items,
@@ -70,6 +82,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       clearCart,
       getTotalPrice,
       getCartItemQuantity,
+      isPaymentInProgress,
+      orderId,
+      setPaymentStatus,
     }}>
       {children}
     </CartContext.Provider>
