@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { fetchProducts } from '@/utils/database';
 import { updateProductStock } from '@/utils/updateStock';
-import Toast from '@/components/ui/Toast';
+import Toast from '../ui/Toast';
 import CheckoutForm from '../checkout/CheckoutForm';
 import { createTransaction, getTransactionStatus, TransactionStatus } from '@/utils/midtrans';
 
@@ -82,9 +82,7 @@ export default function Cart() {
             retryCount++;
             if (retryCount >= MAX_RETRIES) {
               clearInterval(checkInterval);
-              setToastMessage('Unable to check payment status. Please refresh the page.');
-              setToastType('error');
-              setShowToast(true);
+              showToastMessage('Unable to check payment status. Please refresh the page.', 'error');
             }
             return;
           }
@@ -92,9 +90,7 @@ export default function Cart() {
           // If transaction not found or other error, clear payment state
           updatePaymentState(null, null);
           setCustomerInfo(null);
-          setToastMessage(response.error);
-          setToastType('error');
-          setShowToast(true);
+          showToastMessage(response.error, 'error');
           clearInterval(checkInterval);
           return;
         }
@@ -106,9 +102,7 @@ export default function Cart() {
         if (status.transaction_status === TransactionStatus.SUCCESS) {
           updatePaymentState(null, null);
           setCustomerInfo(null);
-          setToastMessage('Payment successful! Stock updated.');
-          setToastType('success');
-          setShowToast(true);
+          showToastMessage('Payment successful! Stock updated.', 'success');
           // Clear cart
           items.forEach(item => removeFromCart(item.id));
           clearInterval(checkInterval);
@@ -119,9 +113,7 @@ export default function Cart() {
         ) {
           updatePaymentState(null, null);
           setCustomerInfo(null);
-          setToastMessage('Payment was not completed. Please try again.');
-          setToastType('error');
-          setShowToast(true);
+          showToastMessage('Payment was not completed. Please try again.', 'error');
           clearInterval(checkInterval);
         }
       } catch (error) {
@@ -129,9 +121,7 @@ export default function Cart() {
         retryCount++;
         if (retryCount >= MAX_RETRIES) {
           clearInterval(checkInterval);
-          setToastMessage('Unable to check payment status. Please refresh the page.');
-          setToastType('error');
-          setShowToast(true);
+          showToastMessage('Unable to check payment status. Please refresh the page.', 'error');
         }
       }
     };
@@ -148,6 +138,45 @@ export default function Cart() {
       }
     };
   }, [items, orderId]);
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      try {
+        await checkAndUpdatePaymentStatus();
+      } catch (error) {
+        console.error('Error in status check interval:', error);
+      }
+    };
+
+    const interval = setInterval(checkStatus, 30000); // Check every 30 seconds
+    return () => clearInterval(interval);
+  }, [orderId]);
+
+  useEffect(() => {
+    // Handle checkout form submission
+    const handleCheckoutSubmit = (e: CustomEvent) => {
+      const { data } = e.detail;
+      handleCheckout(data);
+    };
+
+    // Handle checkout form cancellation
+    const handleCheckoutCancel = () => {
+      setShowCheckoutForm(false);
+      setCustomerInfo(null);
+      updatePaymentState(null, null);
+      showToastMessage('Payment has been cancelled', 'info');
+    };
+
+    // Add event listeners
+    window.addEventListener('checkoutSubmit', handleCheckoutSubmit as EventListener);
+    window.addEventListener('checkoutCancel', handleCheckoutCancel);
+
+    // Cleanup event listeners
+    return () => {
+      window.removeEventListener('checkoutSubmit', handleCheckoutSubmit as EventListener);
+      window.removeEventListener('checkoutCancel', handleCheckoutCancel);
+    };
+  }, []);
 
   const checkAndUpdatePaymentStatus = async () => {
     if (!orderId) return;
@@ -169,16 +198,16 @@ export default function Cart() {
         
         let message = 'Payment needs to be retried.';
         if (data.transaction_status === TransactionStatus.EXPIRED) {
-          message = 'Payment has expired. Please try again.';
+          message = 'Payment has expired';
+          showToastMessage('Payment has expired', 'error');
         } else if (data.transaction_status === TransactionStatus.CANCEL) {
-          message = 'Payment was cancelled. Please try again.';
+          message = 'Payment was cancelled';
+          showToastMessage('Payment was cancelled', 'info');
         } else if (data.transaction_status === TransactionStatus.FAILURE) {
           message = 'Payment failed. Please try again.';
         }
         
-        setToastMessage(message);
-        setToastType('info');
-        setShowToast(true);
+        showToastMessage(message, 'info');
         return false;
       }
       return true;
@@ -188,20 +217,15 @@ export default function Cart() {
     }
   };
 
-  useEffect(() => {
-    if (!orderId) return;
-
-    const checkStatus = async () => {
-      try {
-        await checkAndUpdatePaymentStatus();
-      } catch (error) {
-        console.error('Error in status check interval:', error);
-      }
-    };
-
-    const interval = setInterval(checkStatus, 30000); // Check every 30 seconds
-    return () => clearInterval(interval);
-  }, [orderId]);
+  const showToastMessage = (message: string, type: 'success' | 'error' | 'info') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+    // Auto-hide toast after duration
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
 
   const handleQuantityUpdate = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) {
@@ -212,9 +236,7 @@ export default function Cart() {
     const availableStock = stockLevels[itemId];
     
     if (newQuantity > availableStock) {
-      setToastMessage(`Sorry, only ${availableStock} items available in stock`);
-      setToastType('error');
-      setShowToast(true);
+      showToastMessage(`Sorry, only ${availableStock} items available in stock`, 'error');
       return;
     }
     
@@ -232,9 +254,7 @@ export default function Cart() {
       
       // Validate cart is not empty
       if (items.length === 0) {
-        setToastMessage('Your cart is empty');
-        setToastType('error');
-        setShowToast(true);
+        showToastMessage('Your cart is empty', 'error');
         return;
       }
 
@@ -289,9 +309,7 @@ export default function Cart() {
         (window as any).snap.pay(data.token, {
           onSuccess: function(result: any){
             console.log('Payment success:', result);
-            setToastMessage('Payment successful!');
-            setToastType('success');
-            setShowToast(true);
+            showToastMessage('Payment successful!', 'success');
             // Clear payment state
             updatePaymentState(null, null);
             setCustomerInfo(null);
@@ -300,15 +318,11 @@ export default function Cart() {
           },
           onPending: function(result: any){
             console.log('Payment pending:', result);
-            setToastMessage('Payment is being processed...');
-            setToastType('info');
-            setShowToast(true);
+            showToastMessage('Payment is being processed...', 'info');
           },
           onError: function(result: any){
             console.error('Payment error:', result);
-            setToastMessage('Payment failed. Please try again.');
-            setToastType('error');
-            setShowToast(true);
+            showToastMessage('Payment failed. Please try again.', 'error');
             // Clear payment state on error
             updatePaymentState(null, null);
             setCustomerInfo(null);
@@ -317,9 +331,7 @@ export default function Cart() {
           },
           onClose: function(){
             console.log('Customer closed the popup without finishing the payment');
-            setToastMessage('Payment window closed. You can resume payment later.');
-            setToastType('info');
-            setShowToast(true);
+            showToastMessage('Payment window closed. You can resume payment later.', 'info');
           }
         });
       } else {
@@ -327,9 +339,7 @@ export default function Cart() {
       }
     } catch (error: any) {
       console.error('Payment error:', error);
-      setToastMessage(error.message || 'Failed to process payment. Please try again.');
-      setToastType('error');
-      setShowToast(true);
+      showToastMessage(error.message || 'Failed to process payment. Please try again.', 'error');
       // Show form again on error
       setShowCheckoutForm(true);
     } finally {
@@ -354,9 +364,7 @@ export default function Cart() {
         (window as any).snap.pay(paymentToken, {
           onSuccess: function(result: any){
             console.log('Payment success:', result);
-            setToastMessage('Payment successful!');
-            setToastType('success');
-            setShowToast(true);
+            showToastMessage('Payment successful!', 'success');
             // Clear payment state
             updatePaymentState(null, null);
             setCustomerInfo(null);
@@ -365,15 +373,11 @@ export default function Cart() {
           },
           onPending: function(result: any){
             console.log('Payment pending:', result);
-            setToastMessage('Payment is being processed...');
-            setToastType('info');
-            setShowToast(true);
+            showToastMessage('Payment is being processed...', 'info');
           },
           onError: function(result: any){
             console.error('Payment error:', result);
-            setToastMessage('Payment failed. Please try again.');
-            setToastType('error');
-            setShowToast(true);
+            showToastMessage('Payment failed. Please try again.', 'error');
             // Clear payment state on error
             updatePaymentState(null, null);
             setCustomerInfo(null);
@@ -382,9 +386,7 @@ export default function Cart() {
             console.log('Customer closed the popup without finishing the payment');
             // Check status immediately when popup is closed
             checkAndUpdatePaymentStatus();
-            setToastMessage('Payment window closed. You can resume payment if it\'s still valid.');
-            setToastType('info');
-            setShowToast(true);
+            showToastMessage('Payment window closed. You can resume payment if it\'s still valid.', 'info');
           }
         });
       } else {
@@ -392,9 +394,7 @@ export default function Cart() {
       }
     } catch (error: any) {
       console.error('Resume payment error:', error);
-      setToastMessage(error.message || 'Failed to resume payment');
-      setToastType('error');
-      setShowToast(true);
+      showToastMessage(error.message || 'Failed to resume payment', 'error');
       // Clear payment state on error
       updatePaymentState(null, null);
       setCustomerInfo(null);
@@ -418,7 +418,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg max-w-4xl mx-auto">
+    <div className="relative">
       <h2 className="text-3xl font-semibold text-secondary p-6 border-b">Shopping Cart</h2>
       <div className="p-4 sm:p-6 space-y-4">
         {items.map((item) => {
@@ -526,12 +526,8 @@ export default function Cart() {
 
         {showCheckoutForm && (
           <CheckoutForm
-            onSubmit={handleCheckout}
-            onCancel={() => {
-              setShowCheckoutForm(false);
-              setCustomerInfo(null);
-              updatePaymentState(null, null);
-            }}
+            onSubmitData="handleCheckout"
+            onCancelData="handleCancel"
           />
         )}
       </div>
@@ -540,7 +536,9 @@ export default function Cart() {
         <Toast
           message={toastMessage}
           type={toastType}
+          show={showToast}
           onClose={() => setShowToast(false)}
+          duration={3000}
         />
       )}
     </div>

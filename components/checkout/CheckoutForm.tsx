@@ -2,17 +2,19 @@
 
 import { useState } from 'react';
 
+type CustomerInfo = {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+};
+
 interface CheckoutFormProps {
-  onSubmit: (customerInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-  }) => void;
-  onCancel: () => void;
+  onSubmitData: string; // Serializable identifier for the submission action
+  onCancelData: string; // Serializable identifier for the cancel action
 }
 
-export default function CheckoutForm({ onSubmit, onCancel }: CheckoutFormProps) {
+export default function CheckoutForm({ onSubmitData, onCancelData }: CheckoutFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,9 +22,40 @@ export default function CheckoutForm({ onSubmit, onCancel }: CheckoutFormProps) 
     address: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateEmail = (email: string): boolean => {
+    // RFC 5322 compliant email regex
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email.trim());
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
+    setFormData({ ...formData, phone: value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    // Enhanced email validation
+    const email = formData.email.trim();
+    if (!validateEmail(email)) {
+      alert('Please enter a valid email address. Example: user@example.com');
+      return;
+    }
+    
+    // Use window.postMessage or other client-side communication method
+    window.dispatchEvent(new CustomEvent('checkoutSubmit', { 
+      detail: { 
+        action: onSubmitData,
+        data: formData 
+      }
+    }));
+  };
+
+  const handleCancel = () => {
+    window.dispatchEvent(new CustomEvent('checkoutCancel', { 
+      detail: { action: onCancelData }
+    }));
   };
 
   return (
@@ -67,9 +100,12 @@ export default function CheckoutForm({ onSubmit, onCancel }: CheckoutFormProps) 
               type="tel"
               id="phone"
               required
+              inputMode="numeric"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={handlePhoneChange}
+              placeholder="e.g., 08123456789"
+              maxLength={15}
             />
           </div>
 
@@ -90,7 +126,7 @@ export default function CheckoutForm({ onSubmit, onCancel }: CheckoutFormProps) 
           <div className="flex gap-4 mt-6">
             <button
               type="button"
-              onClick={onCancel}
+              onClick={handleCancel}
               className="flex-1 px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel

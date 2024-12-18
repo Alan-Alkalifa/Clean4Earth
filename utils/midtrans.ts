@@ -135,8 +135,7 @@ export async function createTransaction(params: {
 
 export async function getTransactionStatus(orderId: string) {
     try {
-        // Validate Midtrans configuration
-        if (!process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || !process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY) {
+        if (!coreApi) {
             throw new Error('Midtrans configuration missing');
         }
 
@@ -154,8 +153,8 @@ export async function getTransactionStatus(orderId: string) {
             };
         }
         
-        // Handle network errors
-        if (error.message === 'Network Error' || !navigator.onLine) {
+        // Handle network errors - removed browser-specific check
+        if (error.message === 'Network Error') {
             return {
                 success: false,
                 error: 'Network connection issue. Please check your internet connection.'
