@@ -1,16 +1,17 @@
 'use client';
 
+import { FaRecycle, FaTree, FaHandsHelping } from 'react-icons/fa';
 import Image from 'next/image';
-import Link from 'next/link';
 import FadeIn from '../animations/FadeIn';
 import StaggerChildren from '../animations/StaggerChildren';
+import CountUp from '../animations/CountUp';
 
 export default function HomeClient() {
   const stats = [
-    { number: '1000+', label: 'Students Engaged' },
-    { number: '50+', label: 'Projects Completed' },
-    { number: '100+', label: 'Trees Planted' },
-    { number: '5+', label: 'Partner Organizations' }
+    { number: 1000, label: 'Students Engaged', suffix: '+' },
+    { number: 50, label: 'Projects Completed', suffix: '+' },
+    { number: 100, label: 'Trees Planted', suffix: '+' },
+    { number: 5, label: 'Partner Organizations', suffix: '+' }
   ];
 
   const initiatives = [
@@ -43,7 +44,7 @@ export default function HomeClient() {
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
-                  {stat.number}
+                  <CountUp end={stat.number} suffix={stat.suffix} />
                 </div>
                 <div className="text-text-secondary">{stat.label}</div>
               </div>

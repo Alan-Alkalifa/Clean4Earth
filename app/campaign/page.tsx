@@ -3,6 +3,7 @@ import CampaignClient from '@/components/client/CampaignClient';
 import Image from 'next/image';
 import FadeIn from '../../components/animations/FadeIn';
 import { FaLeaf, FaUsers, FaHandsHelping } from 'react-icons/fa';
+import CountUpServer from '@/components/animations/CountUpServer';
 
 export const metadata: Metadata = {
   title: 'Campaigns - Clean4Earth',
@@ -56,17 +57,23 @@ export default function Campaign() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <FadeIn className="text-center p-6">
               <FaLeaf className="w-12 h-12 text-primary mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-2">3+</h3>
+              <h3 className="text-2xl font-bold mb-2">
+                <CountUpServer end={3} suffix="+" />
+              </h3>
               <p className="text-gray-600">Our Active Campaigns</p>
-            </FadeIn>
+            </FadeIn> 
             <FadeIn className="text-center p-6">
               <FaUsers className="w-12 h-12 text-primary mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-2">1000+</h3>
+              <h3 className="text-2xl font-bold mb-2">
+                <CountUpServer end={1000} suffix="+" />
+              </h3>
               <p className="text-gray-600">Our Target Student Participants</p>
             </FadeIn>
             <FadeIn className="text-center p-6">
               <FaHandsHelping className="w-12 h-12 text-primary mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-2">1+</h3>
+              <h3 className="text-2xl font-bold mb-2">
+                <CountUpServer end={1} suffix="+" />
+              </h3>
               <p className="text-gray-600">Partner Organizations</p>
             </FadeIn>
           </div>

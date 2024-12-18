@@ -42,7 +42,7 @@ export default function EventsClient() {
             registrationLink: "/events/online-campaign"
         },
         {
-            id: 2,
+            id: 3,
             title: "Clean4Earth Introducer",
             date: "2024-11-23",
             time: "09:00 AM",
