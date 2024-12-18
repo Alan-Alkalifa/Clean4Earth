@@ -14,7 +14,9 @@ export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const { addToCart } = useCart();
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+  const { addToCart, getCartItemQuantity } = useCart();
 
   useEffect(() => {
     const loadData = async () => {
@@ -37,7 +39,18 @@ export default function ProductList() {
     : products.filter(product => product.category === selectedCategory);
 
   const handleAddToCart = (product: Product) => {
+    const currentQuantityInCart = getCartItemQuantity(product.id);
+    
+    if (currentQuantityInCart >= product.quantity) {
+      setToastMessage('Cannot add more items. Stock limit reached!');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+    
     addToCart(product);
+    setToastMessage('Added to cart successfully!');
+    setToastType('success');
     setShowToast(true);
   };
 
@@ -98,7 +111,7 @@ export default function ProductList() {
               <div className="mt-auto">
                 <p className="text-gray-500 text-sm mb-3 flex items-center">
                   <span className={`w-2 h-2 rounded-full mr-2 ${
-                    product.quantity > 0 ? 'bg-green-500' : 'bg-red-500'
+                    product.quantity > 0 ? 'bg-secondary' : 'bg-primary'
                   }`}></span>
                   Stock: {product.quantity} items
                 </p>
@@ -120,8 +133,9 @@ export default function ProductList() {
       </StaggerChildren>
       {showToast && (
         <Toast
-          message="Added to cart successfully!"
-          type="success"
+          message={toastMessage}
+          type={toastType}
+          show={showToast}
           onClose={() => setShowToast(false)}
         />
       )}

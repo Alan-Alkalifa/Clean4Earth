@@ -31,6 +31,11 @@ export default function Cart() {
   }, []);
 
   const handleQuantityUpdate = (itemId: string, newQuantity: number) => {
+    if (newQuantity < 1) {
+      removeFromCart(itemId);
+      return;
+    }
+    
     const availableStock = stockLevels[itemId];
     
     if (newQuantity > availableStock) {

@@ -5,37 +5,43 @@ import { useEffect, useState } from 'react';
 interface ToastProps {
   message: string;
   duration?: number;
-  onClose: () => void;
   type?: 'success' | 'error' | 'info';
+  show?: boolean;
+  onClose?: () => void;
 }
 
 export default function Toast({ 
   message, 
-  duration = 3000, 
-  onClose,
-  type = 'success' 
+  duration = 3000,
+  type = 'success',
+  show,
+  onClose
 }: ToastProps) {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(show);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(false);
-      setTimeout(onClose, 300); // Wait for fade out animation
-    }, duration);
+    setIsVisible(show);
+    
+    if (show) {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+        if (onClose) onClose();
+      }, duration);
 
-    return () => clearTimeout(timer);
-  }, [duration, onClose]);
+      return () => clearTimeout(timer);
+    }
+  }, [duration, show, onClose]);
 
   const getToastStyles = () => {
     switch (type) {
       case 'success':
-        return 'bg-primary text-white';
+        return 'bg-secondary text-white';
       case 'error':
-        return 'bg-red-500 text-white';
+        return 'bg-primary text-white';
       case 'info':
         return 'bg-secondary text-white';
       default:
-        return 'bg-primary text-white';
+        return 'bg-secondary text-white';
     }
   };
 
