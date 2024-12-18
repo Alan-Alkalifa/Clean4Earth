@@ -28,7 +28,7 @@ export default function Home() {
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-primary">
               Creating a Sustainable Future
             </h1>
-            <p className="text-xl md:text-2xl mb-8 max-w-2xl text-primary">
+            <p className="text-xl md:text-2xl mb-8 max-w-2xl text-white">
               Join UPJ's movement towards environmental sustainability and make a real impact
               on our campus and community.
             </p>

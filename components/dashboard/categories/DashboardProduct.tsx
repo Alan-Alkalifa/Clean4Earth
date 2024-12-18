@@ -460,7 +460,7 @@ function ProductForm({ initialData, onSubmit, onCancel }: ProductFormProps) {
                 <div className="space-y-1">
                     <label className="block text-sm font-medium text-gray-700">Price</label>
                     <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">IDR.</span>
                         <input
                             type="number"
                             value={formData.price}

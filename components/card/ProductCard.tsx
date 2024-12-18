@@ -89,7 +89,7 @@ export default function ProductList() {
                   {product.name}
                 </h3>
                 <span className="text-primary font-bold">
-                  Rp.{product.price}
+                  IDR.{product.price}
                 </span>
               </div>
               <p className="text-gray-600 mb-2">{product.description}</p>

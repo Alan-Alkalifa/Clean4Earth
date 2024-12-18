@@ -1,13 +1,16 @@
 'use client';
 import Link from 'next/link';
 import Image from "next/image";
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
+import { animateMenuOpen, animateMenuClose } from '../animations/menuAnimations';
 import CartIcon from '../cart/CartIcon';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const menuRef = useRef(null);
+  const menuItemsRef = useRef<(HTMLAnchorElement | null)[]>([]);
 
   const menuItems = [
     { name: 'Home', href: '/' },
@@ -20,10 +23,18 @@ export default function Navigation() {
     { name: 'Contact', href: '/contact' },
   ];
 
-  const isActive = (path: string) => {
-    if (path === '/' && pathname !== '/') return false;
-    return pathname?.startsWith(path);
+  const isActive = (href: string) => {
+    if (href === '/' && pathname !== '/') return false;
+    return pathname?.startsWith(href);
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      animateMenuOpen(menuRef.current, menuItemsRef.current);
+    } else {
+      animateMenuClose(menuRef.current, menuItemsRef.current);
+    }
+  }, [isOpen]);
 
   return (
     <nav className="fixed w-full z-50 bg-white/90 backdrop-blur-sm shadow-sm">
@@ -82,13 +93,16 @@ export default function Navigation() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden bg-white border-t">
+          <div ref={menuRef} className="md:hidden h-screen bg-white border-t">
             <div className="container mx-auto py-4">
               <nav className="flex flex-col space-y-4">
-                {menuItems.map((item) => (
+                {menuItems.map((item, index) => (
                   <Link
                     key={item.name}
                     href={item.href}
+                    ref={(el) => {
+                      if (el) menuItemsRef.current[index] = el;
+                    }}
                     className={`text-text-primary hover:text-primary transition-colors relative py-2 px-4
                       ${isActive(item.href) ? 'text-primary bg-primary/5' : ''}`}
                     onClick={() => setIsOpen(false)}
@@ -99,6 +113,9 @@ export default function Navigation() {
                 <div className="border-t border-gray-100 pt-4 px-4">
                   <Link
                     href="/cart"
+                    ref={(el) => {
+                      if (el) menuItemsRef.current[menuItems.length] = el;
+                    }}
                     className="flex items-center text-text-primary hover:text-primary transition-colors"
                     onClick={() => setIsOpen(false)}
                   >

@@ -19,7 +19,7 @@ export default function Resources() {
         <div className="container relative z-10 text-white">
           <FadeIn>
             <h1 className="mb-6 text-primary">Resources</h1>
-            <p className="text-xl md:text-2xl max-w-2xl text-primary">
+            <p className="text-xl md:text-2xl max-w-2xl text-white">
               Explore our collection of sustainability resources and educational materials.
             </p>
           </FadeIn>

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { fetchProducts } from '@/utils/database';
+import { updateProductStock } from '@/utils/updateStock';
 import Toast from '@/components/ui/Toast';
 
 export default function Cart() {
@@ -86,10 +87,36 @@ export default function Cart() {
       const snap = (window as any).snap;
       
       snap.pay(data.token, {
-        onSuccess: function(result: any) {
+        onSuccess: async function(result: any) {
           console.log('Payment success:', result);
-          setToastMessage('Payment successful!');
-          setToastType('success');
+          
+          // Update stock levels in database
+          const updateResult = await updateProductStock(
+            items.map(item => ({
+              id: item.id,
+              quantity: item.quantity
+            }))
+          );
+
+          if (updateResult.success) {
+            // Refresh stock levels
+            const response = await fetchProducts();
+            if (response.success) {
+              const levels = response.data.reduce((acc, product) => {
+                acc[product.id] = product.quantity;
+                return acc;
+              }, {} as Record<string, number>);
+              setStockLevels(levels);
+            }
+
+            setToastMessage('Payment successful! Stock updated.');
+            setToastType('success');
+            // Clear the cart after successful payment and stock update
+            items.forEach(item => removeFromCart(item.id));
+          } else {
+            setToastMessage('Payment successful but failed to update stock. Please contact support.');
+            setToastType('error');
+          }
           setShowToast(true);
         },
         onPending: function(result: any) {

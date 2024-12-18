@@ -21,7 +21,7 @@ export default function Events() {
         <div className="container relative z-10 text-white">
           <FadeIn>
             <h1 className="mb-6 text-primary">Events & Activities</h1>
-            <p className="text-xl md:text-2xl max-w-2xl text-primary">
+            <p className="text-xl md:text-2xl max-w-2xl text-white">
               Join our sustainability events and be part of the change.
             </p>
           </FadeIn>

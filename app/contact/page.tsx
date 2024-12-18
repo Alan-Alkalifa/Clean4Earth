@@ -24,7 +24,7 @@ export default function Contact() {
         <div className="container relative z-10 text-white">
           <FadeIn>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primary">Contact Us</h1>
-            <p className="text-xl md:text-2xl max-w-2xl text-primary">
+            <p className="text-xl md:text-2xl max-w-2xl text-white">
               Have questions about our sustainability initiatives? We're here to help!
             </p>
           </FadeIn>

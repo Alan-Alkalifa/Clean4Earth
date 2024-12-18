@@ -25,7 +25,7 @@ export default function About() {
         <div className="container relative z-10 text-white">
           <FadeIn>
             <h1 className="text-5xl md:text-6xl font-bold mb-6 text-primary">About Clean4Earth</h1>
-            <p className="text-xl md:text-2xl max-w-2xl text-primary">
+            <p className="text-xl md:text-2xl max-w-2xl text-white">
               A student-led movement at Universitas Pembangunan Jaya, 
               working towards a greener and more sustainable future.
             </p>

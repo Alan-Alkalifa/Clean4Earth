@@ -23,7 +23,7 @@ export default async function ProductsPage() {
         <div className="container relative z-10 text-white mx-auto px-4">
           <FadeIn>
             <h1 className="text-5xl text-primary font-bold mb-6">Eco-Friendly Products</h1>
-            <p className="text-xl text-primary md:text-2xl max-w-2xl">
+            <p className="text-xl text-white md:text-2xl max-w-2xl">
               Make a positive impact on the environment with our carefully selected sustainable products.
             </p>
           </FadeIn>
