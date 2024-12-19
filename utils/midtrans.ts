@@ -3,19 +3,22 @@ import midtransClient from 'midtrans-client';
 // Initialize Midtrans Snap client
 const snap = new midtransClient.Snap({
     isProduction: true,
-    serverKey: process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || '',
-    clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || ''
+    serverKey: 'Mid-server__D_xEJ6nJLBglrFgLZx2AjAD',
+    clientKey: 'Mid-client-oK9RZNfZ6G-HuQYM'
 });
 
 // Initialize Midtrans Core API client for status checks
 const coreApi = new midtransClient.CoreApi({
     isProduction: true,
-    serverKey: process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || '',
-    clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || ''
+    serverKey: 'Mid-server__D_xEJ6nJLBglrFgLZx2AjAD',
+    clientKey: 'Mid-client-oK9RZNfZ6G-HuQYM'
 });
 
 // Validate Midtrans configuration
-if (!process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || !process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY) {
+const serverKey = 'Mid-server__D_xEJ6nJLBglrFgLZx2AjAD';
+const clientKey = 'Mid-client-oK9RZNfZ6G-HuQYM';
+
+if (!serverKey || !clientKey) {
     console.error('Midtrans configuration missing. Please set NEXT_PUBLIC_MIDTRANS_SERVER_KEY and NEXT_PUBLIC_MIDTRANS_CLIENT_KEY');
 }
 
@@ -190,6 +193,6 @@ export async function cancelTransaction(orderId: string) {
 }
 
 export const MidtransConfig = {
-    clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '',
+    clientKey: 'Mid-client-oK9RZNfZ6G-HuQYM',
     merchantId: 'G672038663'
 };
