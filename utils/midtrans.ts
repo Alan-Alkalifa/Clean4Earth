@@ -14,14 +14,6 @@ const coreApi = new midtransClient.CoreApi({
     clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || ''
 });
 
-// Validate Midtrans configuration
-const serverKey = process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY;
-const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
-
-if (!serverKey || !clientKey) {
-    console.error('Midtrans configuration missing. Please set NEXT_PUBLIC_MIDTRANS_SERVER_KEY and NEXT_PUBLIC_MIDTRANS_CLIENT_KEY');
-}
-
 interface PaymentDetails {
     orderId: string;
     amount: number;
@@ -29,12 +21,12 @@ interface PaymentDetails {
     customerEmail: string;
     customerPhone?: string;
     customerAddress: string;
-    items: {
+    items: Array<{
         id: string;
         price: number;
         quantity: number;
         name: string;
-    }[];
+    }>;
 }
 
 export const TransactionStatus = {
@@ -43,22 +35,9 @@ export const TransactionStatus = {
     FAILURE: 'failure',
     EXPIRED: 'expired',
     CANCEL: 'cancel'
-} as const;
+};
 
-export async function createTransaction(params: {
-    orderId: string;
-    amount: number;
-    customerName: string;
-    customerEmail: string;
-    customerPhone?: string;
-    customerAddress?: string;
-    items: Array<{
-        id: string;
-        price: number;
-        quantity: number;
-        name: string;
-    }>;
-}) {
+export async function createTransaction(params: PaymentDetails) {
     try {
         // Validate required parameters
         if (!params.orderId || !params.amount || !params.customerName || !params.customerEmail) {
@@ -68,6 +47,11 @@ export async function createTransaction(params: {
         // Validate items
         if (!params.items || params.items.length === 0) {
             throw new Error('No items provided');
+        }
+
+        // Validate Midtrans configuration
+        if (!process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || !process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY) {
+            throw new Error('Midtrans configuration missing');
         }
 
         console.log('Creating Midtrans transaction with params:', {
@@ -128,7 +112,7 @@ export async function createTransaction(params: {
 
 export async function getTransactionStatus(orderId: string) {
     try {
-        if (!coreApi) {
+        if (!process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || !process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY) {
             throw new Error('Midtrans configuration missing');
         }
 
@@ -146,39 +130,44 @@ export async function getTransactionStatus(orderId: string) {
             };
         }
         
-        // Handle network errors - removed browser-specific check
-        if (error.message === 'Network Error') {
+        if (error.message.includes('Network')) {
             return {
                 success: false,
-                error: 'Network connection issue. Please check your internet connection.'
+                error: 'Network error: Unable to reach Midtrans'
             };
         }
-
+        
         return {
             success: false,
-            error: error.message || 'Unknown error occurred'
+            error: error.message
         };
     }
 }
 
 export async function checkPaymentStatus(orderId: string) {
     try {
-        const transactionStatus = await getTransactionStatus(orderId);
-        const status = transactionStatus.data.status;
-        return status;
-    } catch (error) {
-        console.error('Error checking payment status:', error);
-        throw error;
+        const response = await getTransactionStatus(orderId);
+        return response;
+    } catch (error: any) {
+        return {
+            success: false,
+            error: error.message
+        };
     }
 }
 
 export async function cancelTransaction(orderId: string) {
     try {
-        const result = await coreApi.transaction.cancel(orderId);
-        return result;
-    } catch (error) {
-        console.error('Error cancelling transaction:', error);
-        throw error;
+        const response = await coreApi.transaction.cancel(orderId);
+        return {
+            success: true,
+            data: response
+        };
+    } catch (error: any) {
+        return {
+            success: false,
+            error: error.message
+        };
     }
 }
 
