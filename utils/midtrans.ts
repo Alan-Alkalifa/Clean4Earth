@@ -3,20 +3,20 @@ import midtransClient from 'midtrans-client';
 // Initialize Midtrans Snap client
 const snap = new midtransClient.Snap({
     isProduction: true,
-    serverKey: 'Mid-server__D_xEJ6nJLBglrFgLZx2AjAD',
-    clientKey: 'Mid-client-oK9RZNfZ6G-HuQYM'
+    serverKey: process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || '',
+    clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || ''
 });
 
 // Initialize Midtrans Core API client for status checks
 const coreApi = new midtransClient.CoreApi({
     isProduction: true,
-    serverKey: 'Mid-server__D_xEJ6nJLBglrFgLZx2AjAD',
-    clientKey: 'Mid-client-oK9RZNfZ6G-HuQYM'
+    serverKey: process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || '',
+    clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || ''
 });
 
 // Validate Midtrans configuration
-const serverKey = 'Mid-server__D_xEJ6nJLBglrFgLZx2AjAD';
-const clientKey = 'Mid-client-oK9RZNfZ6G-HuQYM';
+const serverKey = process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY;
+const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
 
 if (!serverKey || !clientKey) {
     console.error('Midtrans configuration missing. Please set NEXT_PUBLIC_MIDTRANS_SERVER_KEY and NEXT_PUBLIC_MIDTRANS_CLIENT_KEY');
@@ -83,16 +83,11 @@ export async function createTransaction(params: {
                 order_id: params.orderId,
                 gross_amount: params.amount
             },
-            credit_card: {
-                secure: true
-            },
             customer_details: {
                 first_name: params.customerName,
                 email: params.customerEmail,
                 phone: params.customerPhone || '',
-                billing_address: params.customerAddress ? {
-                    address: params.customerAddress
-                } : undefined
+                address: params.customerAddress || ''
             },
             item_details: params.items.map(item => ({
                 id: item.id,
@@ -188,6 +183,6 @@ export async function cancelTransaction(orderId: string) {
 }
 
 export const MidtransConfig = {
-    clientKey: 'Mid-client-oK9RZNfZ6G-HuQYM',
+    clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '',
     merchantId: 'G672038663'
 };
