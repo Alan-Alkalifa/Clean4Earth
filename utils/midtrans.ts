@@ -2,14 +2,14 @@ import midtransClient from 'midtrans-client';
 
 // Initialize Midtrans Snap client
 const snap = new midtransClient.Snap({
-    isProduction: false,
+    isProduction: true,
     serverKey: 'Mid-server__D_xEJ6nJLBglrFgLZx2AjAD',
     clientKey: 'Mid-client-oK9RZNfZ6G-HuQYM'
 });
 
 // Initialize Midtrans Core API client for status checks
 const coreApi = new midtransClient.CoreApi({
-    isProduction: false,
+    isProduction: true,
     serverKey: 'Mid-server__D_xEJ6nJLBglrFgLZx2AjAD',
     clientKey: 'Mid-client-oK9RZNfZ6G-HuQYM'
 });
