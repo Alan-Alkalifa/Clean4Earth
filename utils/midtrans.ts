@@ -2,14 +2,14 @@ import midtransClient from 'midtrans-client';
 
 // Initialize Midtrans Snap client
 const snap = new midtransClient.Snap({
-    isProduction: true,
+    isProduction: false,
     serverKey: 'Mid-server__D_xEJ6nJLBglrFgLZx2AjAD',
     clientKey: 'Mid-client-oK9RZNfZ6G-HuQYM'
 });
 
 // Initialize Midtrans Core API client for status checks
 const coreApi = new midtransClient.CoreApi({
-    isProduction: true,
+    isProduction: false,
     serverKey: 'Mid-server__D_xEJ6nJLBglrFgLZx2AjAD',
     clientKey: 'Mid-client-oK9RZNfZ6G-HuQYM'
 });
@@ -60,11 +60,6 @@ export async function createTransaction(params: {
     }>;
 }) {
     try {
-        // Validate Midtrans configuration
-        if (!process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || !process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY) {
-            throw new Error('Midtrans configuration missing');
-        }
-
         // Validate required parameters
         if (!params.orderId || !params.amount || !params.customerName || !params.customerEmail) {
             throw new Error('Missing required parameters');
