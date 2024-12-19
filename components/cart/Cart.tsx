@@ -307,9 +307,28 @@ export default function Cart() {
       // Open Midtrans Snap payment page
       if ((window as any).snap) {
         (window as any).snap.pay(data.token, {
-          onSuccess: function(result: any){
+          onSuccess: async function(result: any){
             console.log('Payment success:', result);
-            showToastMessage('Payment successful!', 'success');
+            
+            // Update stock levels
+            try {
+              const stockUpdates = items.map(item => ({
+                id: item.id,
+                quantity: item.quantity
+              }));
+              
+              const updateResult = await updateProductStock(stockUpdates);
+              if (!updateResult.success) {
+                console.error('Failed to update stock:', updateResult.error);
+                showToastMessage('Payment successful but stock update failed. Please contact support.', 'error');
+              } else {
+                showToastMessage('Payment successful! Stock updated.', 'success');
+              }
+            } catch (error) {
+              console.error('Error updating stock:', error);
+              showToastMessage('Payment successful but stock update failed. Please contact support.', 'error');
+            }
+
             // Clear payment state
             updatePaymentState(null, null);
             setCustomerInfo(null);
@@ -362,9 +381,28 @@ export default function Cart() {
       // Open Midtrans Snap payment page with stored token
       if ((window as any).snap) {
         (window as any).snap.pay(paymentToken, {
-          onSuccess: function(result: any){
+          onSuccess: async function(result: any){
             console.log('Payment success:', result);
-            showToastMessage('Payment successful!', 'success');
+            
+            // Update stock levels
+            try {
+              const stockUpdates = items.map(item => ({
+                id: item.id,
+                quantity: item.quantity
+              }));
+              
+              const updateResult = await updateProductStock(stockUpdates);
+              if (!updateResult.success) {
+                console.error('Failed to update stock:', updateResult.error);
+                showToastMessage('Payment successful but stock update failed. Please contact support.', 'error');
+              } else {
+                showToastMessage('Payment successful! Stock updated.', 'success');
+              }
+            } catch (error) {
+              console.error('Error updating stock:', error);
+              showToastMessage('Payment successful but stock update failed. Please contact support.', 'error');
+            }
+
             // Clear payment state
             updatePaymentState(null, null);
             setCustomerInfo(null);
