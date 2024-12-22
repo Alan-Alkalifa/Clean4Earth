@@ -7,7 +7,7 @@ import { useCart } from '@/context/CartContext';
 import { fetchProducts } from '@/utils/database';
 import { updateProductStock } from '@/utils/updateStock';
 import Toast from '../ui/Toast';
-import CheckoutForm from '../checkout/CheckoutForm';
+import CheckoutForm from '../../components/form/CheckoutForm';
 import { createTransaction, getTransactionStatus, TransactionStatus } from '@/utils/midtrans';
 
 export default function Cart() {
