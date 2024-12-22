@@ -6,10 +6,8 @@ import StaggerChildren from '../animations/StaggerChildren';
 
 export default function AboutClient() {
   const objectives = [
-    "Promote environmental awareness and education",
-    "Implement sustainable practices across campus",
-    "Reduce waste and energy consumption",
-    "Foster community engagement in sustainability",
+    "To create and share educational content (images or videos) about the impact of unclean living habits and the importance of environmental cleanliness, in order to increase public knowledge and awareness.",
+    
   ];
 
   const targetAudience = [
@@ -25,16 +23,16 @@ export default function AboutClient() {
       <section className="py-20">
         <div className="container">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <FadeIn direction="right">
-              <div className="relative h-[400px]">
-                <Image
-                  src="https://images.unsplash.com/photo-1472289065668-ce650ac443d2?ixlib=rb-4.0.3"
-                  alt="Our Mission"
-                  fill
-                  className="object-cover rounded-lg"
-                />
-              </div>
-            </FadeIn>
+          <FadeIn direction="right">
+    <div className="relative h-[400px]">
+        <Image
+src="https://images.unsplash.com/photo-1552664730-d307ca884978"
+            alt="Our Mission"
+            fill
+            className="object-cover rounded-lg"
+        />
+    </div>
+</FadeIn>
             <FadeIn direction="left" delay={0.3}>
               <div>
                 <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
@@ -52,24 +50,19 @@ export default function AboutClient() {
         </div>
       </section>
 
-      {/* Objectives Section */}
-      <section className="py-20 bg-background">
-        <div className="container">
-          <FadeIn>
+{/* Objectives Section */}
+<section className="py-20 bg-background">
+    <div className="container">
+        <FadeIn>
             <h2 className="text-3xl font-bold text-center mb-12">Our Objectives</h2>
-          </FadeIn>
-          <StaggerChildren className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {objectives.map((objective, index) => (
-              <div
-                key={index}
-                className="bg-white p-6 rounded-lg shadow-md"
-              >
-                <p className="text-lg text-text-secondary">{objective}</p>
-              </div>
-            ))}
-          </StaggerChildren>
-        </div>
-      </section>
+        </FadeIn>
+        <StaggerChildren className="max-w-4xl mx-auto">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+                <p className="text-lg text-text-secondary text-center">{objectives[0]}</p>
+            </div>
+        </StaggerChildren>
+    </div>
+</section>
 
       {/* Target Audience */}
       <section className="py-20">
