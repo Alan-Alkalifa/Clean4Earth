@@ -39,10 +39,8 @@ export default function AboutClient() {
               <div>
                 <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
                 <p className="mb-4 text-text-secondary">
-                  We strive to create a sustainable future by implementing
-                  eco-friendly practices, raising awareness about environmental
-                  issues, and fostering a community of environmentally conscious
-                  individuals.
+                "The 'Clean4Earth' campaign aims to create a clean and sustainable environment
+                for future generations. This campaign promotes awareness and concrete actions in maintaining environmental cleanliness. With a focus on responsible waste management, reducing plastic usage, and enhancing recycling habits, this campaign strives to achieve a greener and cleaner future for everyone."
                 </p>
                 <p className="text-text-secondary">
                   Through education, action, and collaboration, we aim to make

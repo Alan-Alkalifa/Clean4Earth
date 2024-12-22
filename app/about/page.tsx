@@ -39,10 +39,9 @@ export default function About() {
       <section className="py-20 bg-primary text-white">
         <div className="container text-center">
           <FadeIn>
-            <h2 className="text-3xl font-bold mb-6">Join Our Mission</h2>
+            <h2 className="text-3xl font-bold mb-6">Join Goals</h2>
             <p className="mb-8 text-lg max-w-2xl mx-auto text-white/90">
-              Be part of the change! Join Clean4Earth and help us create a more
-              sustainable future for our campus and community.
+             "Fostering and enhancing clean living habits in the community through the implementation of clean living behavior in daily environments."
             </p>
             <a
               href="/get-involved"

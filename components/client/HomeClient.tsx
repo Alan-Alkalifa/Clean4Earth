@@ -24,11 +24,6 @@ export default function HomeClient() {
       title: 'Digital Transformation Initiative',
       description: 'Transform UPJ into a paperless campus through digital solutions. We\'re implementing e-documents, digital submissions, and smart learning platforms to reduce paper waste and increase efficiency.',
       image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3'
-    },
-    {
-      title: 'Smart Canteen Initiative',
-      description: 'Introducing a self-service system in our campus canteen where students clean up after meals. This initiative promotes responsibility, cleanliness, and reduces the need for additional cleaning staff.',
-      image: 'https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-4.0.3'
     }
   ];
 
@@ -59,20 +54,20 @@ export default function HomeClient() {
           <FadeIn>
             <h2 className="text-3xl font-bold text-center mb-16">Our Initiatives</h2>
           </FadeIn>
-          <StaggerChildren className="grid md:grid-cols-3 gap-8">
+          <StaggerChildren className="grid md:grid-cols-2 gap-8">
             {initiatives.map((initiative, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="relative h-48">
+              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden w-full">
+                <div className="relative h-64">
                   <Image
                     src={initiative.image}
                     alt={initiative.title}
                     fill
-                    className="object-cover"
+                    className="object-cover w-full"
                   />
                 </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">{initiative.title}</h3>
-                  <p className="text-text-secondary">{initiative.description}</p>
+                <div className="p-8">
+                  <h3 className="text-2xl font-semibold mb-4">{initiative.title}</h3>
+                  <p className="text-text-secondary text-lg">{initiative.description}</p>
                 </div>
               </div>
             ))}

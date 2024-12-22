@@ -58,7 +58,7 @@ export default function Campaign() {
             <FadeIn className="text-center p-6">
               <FaLeaf className="w-12 h-12 text-primary mx-auto mb-4" />
               <h3 className="text-2xl font-bold mb-2">
-                <CountUpServer end={3} suffix="+" />
+                <CountUpServer end={2} suffix="+" />
               </h3>
               <p className="text-gray-600">Our Active Campaigns</p>
             </FadeIn> 

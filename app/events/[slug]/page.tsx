@@ -25,10 +25,10 @@ const getEventBySlug = (slug: string) => {
             description: "Follow us on Instagram to learn about our Campaign.",
             image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3"
         },
-        'open-booth-campaign': {
+        'Exhibition-Clean4Earth': {
             title: "Exhibition Clean4Earth",
             date: "2024-12-23",
-            time: "07:00 AM - 03.00 PM",
+            time: "10:00 AM - 03.00 PM",
             location: "Aula Lantai 3 Gedung B UPJ",
             description: "Come and learn about our sustainability initiatives.",
             image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3"

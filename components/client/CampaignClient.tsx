@@ -18,28 +18,12 @@ export default function CampaignClient() {
       goals: ["Install 50 recycling stations", "Reduce waste by 30%", "Train 100 student volunteers"]
     },
     {
-      title: "Smart Canteen Initiative",
-      description: "Introducing a self-service system in our campus canteen where students clean up after meals. This initiative promotes responsibility, cleanliness, and reduces the need for additional cleaning staff.",
-      progress: 30,
-      image: "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-4.0.3",
-      icon: <FaUtensils className="w-8 h-8 text-primary" />,
-      goals: ["Install Self-Service Stations", "Implement Waste Sorting System", "Reduce Food Waste by 40%"]
-    },
-    {
       title: "Digital Transformation Initiative",
       description: "Transform UPJ into a paperless campus through digital solutions. We're implementing e-documents, digital submissions, and smart learning platforms to reduce paper waste and increase efficiency.",
       progress: 45,
       image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3",
       icon: <FaLaptop className="w-8 h-8 text-primary" />,
       goals: ["100% Digital Assignment Submissions", "E-library Implementation", "Paperless Administrative Processes"]
-    },
-    {
-      title: "Zero Waste Challenge",
-      description: "Join our campus-wide initiative to reduce waste and promote sustainable practices.",
-      progress: 10,
-      image: "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?ixlib=rb-4.0.3",
-      icon: <FaTrash className="w-8 h-8 text-primary" />,
-      goals: ["500 participants", "Reduce single-use plastics", "Weekly waste audits"]
     }
   ];
 
