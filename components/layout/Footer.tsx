@@ -97,7 +97,7 @@ export default function Footer() {
 
         <div className="mt-12 pt-8 border-t border-white/10 text-center">
           <p className="text-white/80">&copy; {new Date().getFullYear()} Clean4Earth. All rights reserved.</p>
-          <p className="text-white/60 mt-2">Powered By LantaiTiga Digital Creative Agency</p>
+          <p className="text-white/60 mt-2">Created By Alan Alkalifa</p>
         </div>
       </div>
     </footer>
